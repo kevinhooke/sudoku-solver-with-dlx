@@ -11,6 +11,19 @@ public class DancingLinks {
     }
     
     /**
+     * Get a combination row using name in format e.g. 3:c2:r1 = 3 in col 2 row 1
+     * @param combination
+     * @return
+     */
+    public ConstraintCell getCombinationRowUsingName(String combination) {
+        ConstraintCell result = null; 
+        
+        //TODO
+        
+        return result;
+    }
+    
+    /**
      * Remove a cell from the candidate matrix by linking it's left and right neighbor
      * cells, which removes itself from the linked list of cells for that row.
      * @param column

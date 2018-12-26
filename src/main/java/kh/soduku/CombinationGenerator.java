@@ -61,12 +61,13 @@ public class CombinationGenerator {
                     previousCandidateNode = candidateNode;
                     
                     
-                    //TODO:links between nodes in columns
+                    //TODO:links between nodes in columns: as matching constraint nodes are added, need to
+                    //link to the previous node in same column, need to track in previousLinkNodes
                     
                     previousLinkNodes = this.generateNumberInACellConbinations(candidateNode, row, col, false);
                     previousLinkNodes = this.generateNumberInARowCombinations(previousLinkNodes, row, num, false);
                     previousLinkNodes = this.generateNumberInAColumnCombinations(previousLinkNodes, col, num, false);
-                    previousLinkNodes = this.generateNumberInASquareCombinations(previousLinkNodes, row, col, num, true);
+                    previousLinkNodes = this.generateNumberInASquareCombinations(previousLinkNodes, row, col, num, false);
                     numberOfCombinations++;
                     previousNode = candidateNode;
                     System.out.println();
@@ -207,13 +208,8 @@ public class CombinationGenerator {
                     System.out.print(constraintNode.getName() + " ");
                 }
                 else {
-                    //to find matching constraint cells, we need to work out if the current row and col
-                    //are in the current square
-                    
-                    //notes: sq1: 1*3, row and col 1 to 3 are in sq1
-                    //       sq2: 2*3 cols upper=6 lower=6-3=3, 3to6, rows 1-3
-                    //TODO logic here
-                    if(currentCol == -1 && currentRow == -1) {
+                    //do the current number, row and colum satisfy the current square constraint (e.g. 1:s1)
+                    if(currentNum == num && this.rowAndColInSquare(currentCol, currentRow, square)) {
                         constraintNode.setConstraintSatisfied(1);
                         
                         //assign links to/from this node and previous constraint node
@@ -232,6 +228,57 @@ public class CombinationGenerator {
         return previousLinkNodes;
     }
     
+    //row 1-3 col 1-3 = s1
+    //row 1-3 col 4-6 = s2
+    //row 1-3 col 7-9 = s3
+    //row 4-6 col 1-3 = s4
+    //row 4-6 col 4-6 = s5
+    //row 4-6 col 7-9 = s6
+    //row 7-9 col 1-3 = s7
+    //row 7-9 col 4-6 = s8
+    //row 7-9 col 7-9 = s9
+    //TODO: there's probably a more elagant way of doing this - potential for refactor later
+    public boolean rowAndColInSquare(int currentCol, int currentRow, int square) {
+        boolean result = false;
+        
+        //check inputs
+        //TODO calc square range based on max rows and max cols
+        if(square < 1 || square > 9 || currentRow < 1 || currentRow > MAX_ROWS 
+                || currentCol < 1 || currentCol > MAX_COLS) {
+            throw new IllegalArgumentException();
+        }
+        
+        if(square == 1 && (currentRow >= 1 && currentRow <= 3) && (currentCol >= 1 && currentCol <= 3)) {
+            result = true;
+        }
+        else if(square == 2 && (currentRow >= 1 && currentRow <= 3) && (currentCol >= 4 && currentCol <= 6)) {
+            result = true;
+        }
+        else if(square == 3 && (currentRow >= 1 && currentRow <= 3) && (currentCol >= 7 && currentCol <= 9)) {
+            result = true;
+        }
+        else if(square == 4 && (currentRow >= 4 && currentRow <= 6) && (currentCol >= 1 && currentCol <= 3)) {
+            result = true;
+        }
+        else if(square == 5 && (currentRow >= 4 && currentRow <= 6) && (currentCol >= 4 && currentCol <= 6)) {
+            result = true;
+        }
+        else if(square == 6 && (currentRow >= 4 && currentRow <= 6) && (currentCol >= 7 && currentCol <= 9)) {
+            result = true;
+        }
+        else if(square == 7 && (currentRow >= 7 && currentRow <= 9) && (currentCol >= 1 && currentCol <= 3)) {
+            result = true;
+        }
+        else if(square == 8 && (currentRow >= 7 && currentRow <= 9) && (currentCol >= 4 && currentCol <= 6)) {
+            result = true;
+        }
+        else if(square == 9 && (currentRow >= 7 && currentRow <= 9) && (currentCol >= 7 && currentCol <= 9)) {
+            result = true;
+        }
+
+        return result;
+    }
+
     // -------------------------------------------------------------------------------------------------
     // following methods used only to write a visual representation of the candidate x constraint matrix
     // -------------------------------------------------------------------------------------------------

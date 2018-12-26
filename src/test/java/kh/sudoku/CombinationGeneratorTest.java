@@ -1,7 +1,9 @@
 package kh.sudoku;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -41,24 +43,47 @@ public class CombinationGeneratorTest {
         
         while((cellCombination = cellCombination.getDown()) != null) {
             numberOfSatisfiedContrainstsPerRow = 0;
-            System.out.print("row " + cellCombination.getName() + ": ");
+            System.out.print("combination " + cellCombination.getName() + ": ");
             satisfiedConstraint = cellCombination;
             //for each row
-            for(int expectedConstraint = 0; expectedConstraint < 5; expectedConstraint++) {
+            for(int expectedConstraint = 0; expectedConstraint < 4; expectedConstraint++) {
                 satisfiedConstraint = satisfiedConstraint.getRight();
             
                 //print out the name of the next node part from the last iteration
-                if(expectedConstraint < 4) {
-                    System.out.print(satisfiedConstraint.getName() + " ");
-                }
+                System.out.print(satisfiedConstraint.getName() + " ");
                 numberOfSatisfiedContrainstsPerRow++;
             }
             System.out.println();
-            assertEquals(5, numberOfSatisfiedContrainstsPerRow);
+            assertEquals(4, numberOfSatisfiedContrainstsPerRow);
             //last node from calling .getRight() expected to be null
-            assertNull(satisfiedConstraint);
+            assertNull(satisfiedConstraint.getRight());
         }
         
     }
     
+    
+    @Test
+    public void testrowAndColInSquare_square1() {
+        CombinationGenerator generator = new CombinationGenerator();
+        assertTrue(generator.rowAndColInSquare(1, 1, 1));
+        assertTrue(generator.rowAndColInSquare(1, 3, 1));
+        assertTrue(generator.rowAndColInSquare(3, 1, 1));
+        assertTrue(generator.rowAndColInSquare(3, 3, 1));
+        
+        //negative test
+        assertFalse(generator.rowAndColInSquare(4, 1, 1));
+    }
+
+    @Test
+    public void testrowAndColInSquare_square9() {
+        CombinationGenerator generator = new CombinationGenerator();
+        assertTrue(generator.rowAndColInSquare(7, 7, 9));
+        assertTrue(generator.rowAndColInSquare(7, 9, 9));
+        assertTrue(generator.rowAndColInSquare(9, 7, 9));
+        assertTrue(generator.rowAndColInSquare(9, 9, 9));
+        
+        //negative test
+        assertFalse(generator.rowAndColInSquare(6, 9, 9));
+    }
+
 }

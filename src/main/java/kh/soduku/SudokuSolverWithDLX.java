@@ -25,4 +25,20 @@ public class SudokuSolverWithDLX {
         
         potentialSolutionCandiates.add(cell);        
     }
+    
+    public void solve() {
+        
+        // if constraint matrix still has columns with 1s, continue, else end
+        
+        // select a constraint column from matrix with least number of 1s
+        
+        // select row in matrix that satisfies this contraint (has a 1 in this column)
+        // note: chose row that has not yet been tried as a solution, implying we need to track which have already been tried
+        
+        // ? cover what here
+        
+        // repeat
+        
+    }
+    
 }
