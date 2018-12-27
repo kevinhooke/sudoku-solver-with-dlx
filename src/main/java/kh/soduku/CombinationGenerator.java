@@ -33,17 +33,11 @@ public class CombinationGenerator {
         previousLinkNodes.setLastConstraintNode(previousNode);
             
         //generate first row of headers
-        //test removing outer loop
-        //for (int col = 1; col <= MAX_COLS; col++) {
-        //    for (int num = 1; num <= MAX_NUM; num++) {
-                previousLinkNodes = this.generateNumberInACellConbinations(previousLinkNodes, 1, col, true);
-                previousLinkNodes = this.generateNumberInARowCombinations(previousLinkNodes, 1, col, num, true);
-                previousLinkNodes = this.generateNumberInAColumnCombinations(previousLinkNodes, col, num, true);
-                previousLinkNodes = this.generateNumberInASquareCombinations(previousLinkNodes, 1, col, num, true);
-                previousNode = previousLinkNodes.getLastConstraintNode();
-        //    }
-        //}
-        
+        previousLinkNodes = this.generateNumberInACellConbinationsHeaders(previousLinkNodes);
+        previousLinkNodes = this.generateNumberInARowCombinationsHeaders(previousLinkNodes);
+        previousLinkNodes = this.generateNumberInAColumnCombinationsHeaders(previousLinkNodes);
+        previousLinkNodes = this.generateNumberInASquareCombinationsHeaders(previousLinkNodes);
+        previousNode = previousLinkNodes.getLastConstraintNode();
         System.out.println();
         
         //reset back to working from the root
@@ -78,15 +72,8 @@ public class CombinationGenerator {
         System.out.println("Combinations: " + numberOfCombinations);
         return rootNode;
     }
-
-    //
-    //
-    // TODO: take header loops out to new methods that don't take row and col params because they're not needed
-    // other non-header parts are ok. header code was looping unnessarily and overwriting header nodes
-    //
     
-    public PreviousLinkNodes generateNumberInACellConbinations(PreviousLinkNodes previousLinkNodes, 
-            int currentRow, int currentCol, boolean headerNode) {
+    public PreviousLinkNodes generateNumberInACellConbinationsHeaders(PreviousLinkNodes previousLinkNodes) {
         
         ConstraintCell constraintNode = null;
         
@@ -94,7 +81,6 @@ public class CombinationGenerator {
             for (int col = 1; col <= MAX_COLS; col++) {
                 String nodeName = "n:r" + row + ":c" + col;
                 constraintNode = new ConstraintCell(nodeName);
-                if(headerNode) {
                     constraintNode.setType(NodeType.ConstraintColumnHeader);
                     //header nodes are linked together across the row
                     constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
@@ -105,8 +91,34 @@ public class CombinationGenerator {
                     previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
                     
                     System.out.print(constraintNode.getName() + " ");
-                }
-                else {
+            }
+        }
+        previousLinkNodes.setLastConstraintNode(constraintNode);
+        return previousLinkNodes;
+    }
+    
+    public PreviousLinkNodes generateNumberInACellConbinations(PreviousLinkNodes previousLinkNodes, 
+            int currentRow, int currentCol, boolean headerNode) {
+        
+        ConstraintCell constraintNode = null;
+        
+        for (int row = 1; row <= MAX_ROWS; row++) {
+            for (int col = 1; col <= MAX_COLS; col++) {
+                String nodeName = "n:r" + row + ":c" + col;
+                constraintNode = new ConstraintCell(nodeName);
+//                if(headerNode) {
+//                    constraintNode.setType(NodeType.ConstraintColumnHeader);
+//                    //header nodes are linked together across the row
+//                    constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
+//                    previousLinkNodes.getLastConstraintNode().setRight(constraintNode);
+//                    previousLinkNodes.setLastConstraintNode(constraintNode);
+//                    
+//                    //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
+//                    previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
+//                    
+//                    System.out.print(constraintNode.getName() + " ");
+//                }
+//                else {
                     //System.out.print(nodeName + " ");
                     if(currentRow == row && currentCol == col) {
                         constraintNode.setConstraintSatisfied(1);
@@ -128,13 +140,37 @@ public class CombinationGenerator {
                         constraintNode.setConstraintSatisfied(0);
                     }
                     System.out.print(constraintNode.getConstraintSatisfied());
-                }
+                //}
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);
         return previousLinkNodes;
     }
 
+    public PreviousLinkNodes generateNumberInARowCombinationsHeaders(PreviousLinkNodes previousLinkNodes) {
+        ConstraintCell constraintNode = null;
+        for (int row = 1; row <= MAX_ROWS; row++) {
+            for (int num = 1; num <= MAX_NUM; num++) {
+                String nodeName = num + ":r" + row;
+                constraintNode = new ConstraintCell(nodeName);
+                
+                constraintNode.setType(NodeType.ConstraintColumnHeader);
+                //header nodes are linked together across the row
+                constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
+                previousLinkNodes.getLastConstraintNode().setRight(constraintNode);
+                previousLinkNodes.setLastConstraintNode(constraintNode);
+                
+                //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
+                previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
+                
+                System.out.print(constraintNode.getName() + " ");
+            }
+        }
+        previousLinkNodes.setLastConstraintNode(constraintNode);
+        return previousLinkNodes;
+    }
+
+    
     public PreviousLinkNodes generateNumberInARowCombinations(PreviousLinkNodes previousLinkNodes, 
             int currentRow, int currentCol, int currentNum, boolean headerNode) {
         ConstraintCell constraintNode = null;
@@ -143,19 +179,19 @@ public class CombinationGenerator {
                 String nodeName = num + ":r" + row;
                 constraintNode = new ConstraintCell(nodeName);
                 
-                if(headerNode) {
-                    constraintNode.setType(NodeType.ConstraintColumnHeader);
-                    //header nodes are linked together across the row
-                    constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
-                    previousLinkNodes.getLastConstraintNode().setRight(constraintNode);
-                    previousLinkNodes.setLastConstraintNode(constraintNode);
-                    
-                    //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
-                    previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
-                    
-                    System.out.print(constraintNode.getName() + " ");
-                }
-                else {
+//                if(headerNode) {
+//                    constraintNode.setType(NodeType.ConstraintColumnHeader);
+//                    //header nodes are linked together across the row
+//                    constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
+//                    previousLinkNodes.getLastConstraintNode().setRight(constraintNode);
+//                    previousLinkNodes.setLastConstraintNode(constraintNode);
+//                    
+//                    //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
+//                    previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
+//                    
+//                    System.out.print(constraintNode.getName() + " ");
+//                }
+//                else {
                     if(currentRow == row && currentNum == num) {
                         constraintNode.setConstraintSatisfied(1);
                         constraintNode.setType(NodeType.SatisfiedConstraint);
@@ -176,13 +212,37 @@ public class CombinationGenerator {
                         constraintNode.setConstraintSatisfied(0);
                     }
                     System.out.print(constraintNode.getConstraintSatisfied());
-                }
+                //}
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);
         return previousLinkNodes;
     }
 
+    public PreviousLinkNodes generateNumberInAColumnCombinationsHeaders(PreviousLinkNodes previousLinkNodes) {
+        ConstraintCell constraintNode = null;
+        for (int col = 1; col <= MAX_COLS; col++) {
+            for (int num = 1; num <= MAX_NUM; num++) {
+                String nodeName = num + ":c" + col;
+                constraintNode = new ConstraintCell(nodeName);
+                
+                constraintNode.setType(NodeType.ConstraintColumnHeader);
+                //header nodes are linked together across the row
+                constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
+                previousLinkNodes.getLastConstraintNode().setRight(constraintNode);
+                previousLinkNodes.setLastConstraintNode(constraintNode);
+                
+                //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
+                previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
+                
+                System.out.print(constraintNode.getName() + " ");
+            }
+        }
+        previousLinkNodes.setLastConstraintNode(constraintNode);
+        return previousLinkNodes;
+    }
+
+    
     public PreviousLinkNodes generateNumberInAColumnCombinations(PreviousLinkNodes previousLinkNodes, 
             int currentCol, int currentNum, boolean headerNode) {
         ConstraintCell constraintNode = null;
@@ -230,6 +290,32 @@ public class CombinationGenerator {
         previousLinkNodes.setLastConstraintNode(constraintNode);
         return previousLinkNodes;
     }
+
+    public PreviousLinkNodes generateNumberInASquareCombinationsHeaders(PreviousLinkNodes previousLinkNodes) {
+        ConstraintCell constraintNode = null;
+        
+        for (int square = 1; square <= NUM_SQUARES; square++) {
+            for (int num = 1; num <= MAX_NUM; num++) {
+                String nodeName = num + ":s" + square;
+            
+                constraintNode = new ConstraintCell(nodeName);
+                
+                constraintNode.setType(NodeType.ConstraintColumnHeader);
+                //header nodes are linked together across the row
+                constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
+                previousLinkNodes.getLastConstraintNode().setRight(constraintNode);
+                previousLinkNodes.setLastConstraintNode(constraintNode);
+                
+                //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
+                previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
+                
+                System.out.print(constraintNode.getName() + " ");
+            }
+        }
+        previousLinkNodes.setLastConstraintNode(constraintNode);
+        return previousLinkNodes;
+    }
+
     
     public PreviousLinkNodes generateNumberInASquareCombinations(PreviousLinkNodes previousLinkNodes, 
             int currentRow, int currentCol, int currentNum, boolean headerNode) {
@@ -241,19 +327,19 @@ public class CombinationGenerator {
             
                 constraintNode = new ConstraintCell(nodeName);
                 
-                if(headerNode) {
-                    constraintNode.setType(NodeType.ConstraintColumnHeader);
-                    //header nodes are linked together across the row
-                    constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
-                    previousLinkNodes.getLastConstraintNode().setRight(constraintNode);
-                    previousLinkNodes.setLastConstraintNode(constraintNode);
-                    
-                    //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
-                    previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
-                    
-                    System.out.print(constraintNode.getName() + " ");
-                }
-                else {
+//                if(headerNode) {
+//                    constraintNode.setType(NodeType.ConstraintColumnHeader);
+//                    //header nodes are linked together across the row
+//                    constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
+//                    previousLinkNodes.getLastConstraintNode().setRight(constraintNode);
+//                    previousLinkNodes.setLastConstraintNode(constraintNode);
+//                    
+//                    //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
+//                    previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
+//                    
+//                    System.out.print(constraintNode.getName() + " ");
+//                }
+                //else {
                     //do the current number, row and column satisfy the current square constraint (e.g. 1:s1)
                     if(currentNum == num && this.rowAndColInSquare(currentCol, currentRow, square)) {
                         constraintNode.setConstraintSatisfied(1);
@@ -268,7 +354,7 @@ public class CombinationGenerator {
                         constraintNode.setConstraintSatisfied(0);
                     }
                     System.out.print(constraintNode.getConstraintSatisfied());   
-                }
+                //}
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);

@@ -86,18 +86,27 @@ public class CombinationGeneratorTest {
         assertFalse(generator.rowAndColInSquare(6, 9, 9));
     }
 
+    /**
+     * Column 1 constraint is n:c1:r1.
+     * Expected result: there's 9 valid candidates to satisfy this constraint
+     */
     @Test
-    public void checkLinkedConstraintsInColumn1() {
+    public void checkLinkedConstraintsForColumn1() {
         CombinationGenerator generator = new CombinationGenerator();
         
         ConstraintCell rootCell = generator.generateConstraintGrid();
-        ConstraintCell firstColHeader = rootCell.getRight();
-        ConstraintCell constraint = null;
+        ConstraintCell columnCell = rootCell.getRight();
         int linkedInColumnCount = 0;
-        while((constraint = firstColHeader.getDown()) != null ) {
+        while((columnCell = columnCell.getDown()) != null ) {
             linkedInColumnCount++;
+            
+            //TODO should assert here for the candidate names that match this constraint
+            
         }
         System.out.println("column count: " + linkedInColumnCount);
-        
+        //9 matching constrains for n:c1:r1
+        assertEquals(9, linkedInColumnCount);
     }
+    
+    //TODO need to test removing/covering rows and counting remaining candidates
 }
