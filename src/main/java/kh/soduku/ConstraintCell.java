@@ -10,6 +10,7 @@ public class ConstraintCell {
     private ConstraintCell down;
     private ConstraintCell left;
     private ConstraintCell right;
+    private NodeType type;
     
     public ConstraintCell(String name) {
         super();
@@ -75,6 +76,14 @@ public class ConstraintCell {
 
     public void setConstraintSatisfied(int constraintSatisfied) {
         this.constraintSatisfied = constraintSatisfied;
+    }
+
+    public NodeType getType() {
+        return type;
+    }
+
+    public void setType(NodeType type) {
+        this.type = type;
     }
     
     

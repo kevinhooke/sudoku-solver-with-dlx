@@ -86,4 +86,18 @@ public class CombinationGeneratorTest {
         assertFalse(generator.rowAndColInSquare(6, 9, 9));
     }
 
+    @Test
+    public void checkLinkedConstraintsInColumn1() {
+        CombinationGenerator generator = new CombinationGenerator();
+        
+        ConstraintCell rootCell = generator.generateConstraintGrid();
+        ConstraintCell firstColHeader = rootCell.getRight();
+        ConstraintCell constraint = null;
+        int linkedInColumnCount = 0;
+        while((constraint = firstColHeader.getDown()) != null ) {
+            linkedInColumnCount++;
+        }
+        System.out.println("column count: " + linkedInColumnCount);
+        
+    }
 }

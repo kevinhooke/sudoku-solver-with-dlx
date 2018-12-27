@@ -7,7 +7,11 @@ public class PreviousLinkNodes {
 
     private ConstraintCell previousValidConstraintNode;
     private ConstraintCell lastConstraintNode;
-    private Map<Integer, ConstraintCell> previousConstraintNodesInColumns = new HashMap<>();
+    
+    /**
+     * Map of last satisfied constraint for each column. Used to build links between cells in a column.
+     */
+    private Map<String, ConstraintCell> previousConstraintNodesInColumns = new HashMap<>();
     
     public ConstraintCell getPreviousValidConstraintNode() {
         return previousValidConstraintNode;
@@ -25,19 +29,19 @@ public class PreviousLinkNodes {
         this.lastConstraintNode = lastConstraintNode;
     }
 
-    public ConstraintCell getPreviousConstraintNodeInColumn(int columnIndex) {
-        return this.previousConstraintNodesInColumns.get(columnIndex);
+    public ConstraintCell getPreviousConstraintNodeInColumn(String constraintName) {
+        return this.previousConstraintNodesInColumns.get(constraintName);
     }
     
-    public void setPreviousConstraintNodeInColumn(int columnIndex, ConstraintCell constraint) {
-        this.previousConstraintNodesInColumns.put(columnIndex, constraint);
+    public void setPreviousConstraintNodeInColumn(String constraintName, ConstraintCell constraint) {
+        this.previousConstraintNodesInColumns.put(constraintName, constraint);
     }
     
-    public Map<Integer, ConstraintCell> getPreviousConstraintNodesInColumns() {
+    public Map<String, ConstraintCell> getPreviousConstraintNodesInColumns() {
         return previousConstraintNodesInColumns;
     }
 
-    public void setPreviousConstraintNodesInColumns(Map<Integer, ConstraintCell> previousConstraintNodesInColumns) {
+    public void setPreviousConstraintNodesInColumns(Map<String, ConstraintCell> previousConstraintNodesInColumns) {
         this.previousConstraintNodesInColumns = previousConstraintNodesInColumns;
     }
     
