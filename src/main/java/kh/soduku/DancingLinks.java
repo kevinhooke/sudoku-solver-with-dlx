@@ -1,13 +1,24 @@
 package kh.soduku;
 
+import java.util.List;
+
 public class DancingLinks {
 
-    
     /**
-     * Removes each of the given solutions from the matrix.
+     * Counts the remaining, or unsatisfied constraints remaining in the matrix. If unsatisfied
+     * constraints remain, the puzzle is not yet solved.
+     * 
+     * @param rootNode
+     * @return
      */
-    public void removeGivenSolutionsFromSolutionMatrix() {
-        //TODO
+    public int countRemainingUnsatisfiedConstraints(ConstraintCell rootNode) {
+        int remainingUnsatisfiedConstraints = 0;
+        ConstraintCell constraint = rootNode;
+        while((constraint = constraint.getRight()) != null) {
+            remainingUnsatisfiedConstraints++;
+        }
+        
+        return remainingUnsatisfiedConstraints;
     }
     
     /**
@@ -38,6 +49,16 @@ public class DancingLinks {
     public void uncoverCellInMatrix(ConstraintCell cell) {
         
         //TODO
+    }
+    
+    /**
+     * Removes a candidate row from the matrix without adding it to the backtrack list, because this is
+     * a given solution and we don't need to backtrack for these.
+     * @param row
+     */
+    public void removeCandidateRow(ConstraintCell row) {
+        row.getUp().setDown(row.getDown());
+        row.getDown().setUp(row.getUp());
     }
     
     /**
