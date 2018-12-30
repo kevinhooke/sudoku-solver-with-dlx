@@ -32,23 +32,30 @@ public class CombinationGenerator {
         PreviousLinkNodes previousLinkNodes = new PreviousLinkNodes();
         previousLinkNodes.setLastConstraintNode(previousNode);
             
-        //generate first row of headers
+        //generate first row of column header nodes
         previousLinkNodes = this.generateNumberInACellConbinationsHeaders(previousLinkNodes);
         previousLinkNodes = this.generateNumberInARowCombinationsHeaders(previousLinkNodes);
         previousLinkNodes = this.generateNumberInAColumnCombinationsHeaders(previousLinkNodes);
         previousLinkNodes = this.generateNumberInASquareCombinationsHeaders(previousLinkNodes);
         previousNode = previousLinkNodes.getLastConstraintNode();
+        
+        //link last column node back to root to establish the circularly linked list
+        previousNode.setRight(rootNode);
+        rootNode.setLeft(previousNode);
+        
         System.out.println();
         
         //reset back to working from the root
         previousNode = rootNode;
         previousCandidateNode = previousNode;
         
+        //generate sparse matrix of candidate rows with linked matching constraint nodes in columns
+        //where constraints are met
         for (int row = 1; row <= MAX_ROWS; row++) {
             for (int col = 1; col <= MAX_COLS; col++) {
                 for (int num = 1; num <= MAX_NUM; num++) {
-                    //the first cell in a row is a number:cell:row candidate
-                    String nodeName = num + ":c" + col + ":r" + row;
+                    //the first cell in a row is a number:row:cell candidate solution node
+                    String nodeName = num + ":r" + row + ":c" + col;
                     System.out.print(nodeName + " ");
                     ConstraintCell candidateNode = new ConstraintCell(nodeName);
                     candidateNode.setType(NodeType.Candidate);
@@ -69,10 +76,73 @@ public class CombinationGenerator {
                 }
             }
         }
+        
+        //make circular link from last node in each column back to column header node
+        this.linkLastNodeInEachColumnBackToColumnHeaderNode();
+        
+        //TODO: make circular link from last node in each row back to the row header node
+        //this.linkLastNodeInEachRowBackToRowHeaderNode();
+        
         System.out.println("Combinations: " + numberOfCombinations);
         return rootNode;
     }
     
+    /**
+     * TODO
+     */
+    private void linkLastNodeInEachRowBackToRowHeaderNode() {
+        ConstraintCell rowHeader = this.rootNode;
+        while((rowHeader = rowHeader.getDown()) != this.rootNode) {
+            ConstraintCell cell = rowHeader;
+            ConstraintCell lastCell = null;
+            while((cell = cell.getRight()) != null) {
+                if(cell != null) {
+                    lastCell = cell;
+                }
+            }
+            if(lastCell != null) {
+                //reached last cell, link it back to the row header
+                lastCell.setRight(rowHeader);
+                rowHeader.setLeft(lastCell);
+            }
+            else {
+                System.out.println("here");
+            }
+        }
+    }
+
+
+    /**
+     * TODO broken for 1:s1 constraint pattern
+     */
+    private void linkLastNodeInEachColumnBackToColumnHeaderNode() {
+        
+        //TODO: iterate and set the row headers first
+        // this is causing the npe, not doing this step
+        ConstraintCell columnHeader = this.rootNode;
+        ConstraintCell lastCell = null;
+        while((columnHeader = columnHeader.getRight()) != null) {
+            //keep the last node
+            lastCell = columnHeader;
+        }
+        System.out.println(lastCell.getName());
+        
+        //now iterate the constraint columns
+        columnHeader = this.rootNode;
+        while((columnHeader = columnHeader.getRight()) != this.rootNode) {
+            ConstraintCell cell = columnHeader;
+            lastCell = null;
+            while((cell = cell.getDown()) != null) {
+                if(cell != null) {
+                    lastCell = cell;
+                }
+            }
+            //reached last cell, link it back to the column header
+            lastCell.setDown(columnHeader);
+            columnHeader.setUp(lastCell);
+        }
+    }
+
     public PreviousLinkNodes generateNumberInACellConbinationsHeaders(PreviousLinkNodes previousLinkNodes) {
         
         ConstraintCell constraintNode = null;
@@ -349,6 +419,13 @@ public class CombinationGenerator {
                         constraintNode.setLeft(previousLinkNodes.getPreviousValidConstraintNode());
                         previousLinkNodes.getPreviousValidConstraintNode().setRight(constraintNode);
                         previousLinkNodes.setPreviousValidConstraintNode(constraintNode);
+                        
+                        //assign links to previous satisfied constraint in same column
+                        constraintNode.setUp(previousLinkNodes.getPreviousConstraintNodesInColumns().get(constraintNode.getName()));
+                        previousLinkNodes.getPreviousConstraintNodesInColumns().get(constraintNode.getName()).setDown(constraintNode);
+                        
+                        //add this satisfied constraint as the last for this column for building column links
+                        previousLinkNodes.setPreviousConstraintNodeInColumn(constraintNode.getName(), constraintNode);
                     }
                     else {
                         constraintNode.setConstraintSatisfied(0);

@@ -55,6 +55,12 @@ public class SudokuSolverWithDLX {
      */
     private Map<String, Deque<ConstraintCell>> previouslyTriedCandidateCells = new HashMap<>();
     
+    
+    public SudokuSolverWithDLX() {
+        this.initiateCandidateMatrix();
+        this.solve();
+    }
+    
     /**
      * Adds a row (represented by the cell in column 0) to the list of possible solutions.
      * 
@@ -87,8 +93,7 @@ public class SudokuSolverWithDLX {
     }
     
     public void solve() {
-        
-        this.initiateCandidateMatrix();
+
         
         // if constraint matrix still has columns with 1s, continue, else end
         

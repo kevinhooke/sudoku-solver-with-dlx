@@ -18,11 +18,11 @@ public class SudokuSolverWithDLXTest {
 
     
     //tests
-    String[] cells = {"8:c4:r1", "1:c5:r1", "6:c7:r1", "7:c8:r1"};
+    String[] cells = {"8:r1:c4", "1:r1:c5", "6:r1:c7", "7:r1:c8"};
     
     @Test
     public void removeGivenSolutions() {
-        String[] testSolution1 = {"8:c4:r1"};
+        String[] testSolution1 = {"8:r1:c4"};
         List<String> givenCells = Arrays.asList(testSolution1);
         ConstraintCell rootNode = generator.generateConstraintGrid();
         

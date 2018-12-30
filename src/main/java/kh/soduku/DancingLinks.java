@@ -14,7 +14,8 @@ public class DancingLinks {
     public int countRemainingUnsatisfiedConstraints(ConstraintCell rootNode) {
         int remainingUnsatisfiedConstraints = 0;
         ConstraintCell constraint = rootNode;
-        while((constraint = constraint.getRight()) != null) {
+        //iterate through linked nodes until we end up back at the root node (it's a circularly linked list)
+        while((constraint = constraint.getRight()) != rootNode) {
             remainingUnsatisfiedConstraints++;
         }
         
@@ -68,6 +69,24 @@ public class DancingLinks {
      */
     public void removeColumn(ConstraintCell column) {
         this.coverCellInMatrix(column);
+    }
+
+    /**
+     * Finds a constraint column by constraint name, e.g. "5:r3:c6"
+     * @param rootCell
+     * @param string
+     * @return
+     */
+    public ConstraintCell findColumnByConstraintName(ConstraintCell rootCell, String constraintName) {
+        ConstraintCell cell = rootCell;
+        while((cell = cell.getRight()) != rootCell && !cell.getName().equals(constraintName)) {
+            // do nothing
+        }
+        //check we found the right column
+        if(!cell.getName().equals(constraintName)) {
+            throw new ConstraintColumnNotFoundException();
+        }
+        return cell;
     }
     
 }
