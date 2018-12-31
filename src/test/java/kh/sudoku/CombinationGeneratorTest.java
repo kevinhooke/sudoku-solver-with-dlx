@@ -26,7 +26,7 @@ public class CombinationGeneratorTest {
         int numberOfCellCombinations = 0;
         ConstraintCell nextCell = this.rootCell;
         
-        while((nextCell = nextCell.getDown()) != null) {
+        while((nextCell = nextCell.getDown()) != this.rootCell) {
             numberOfCellCombinations++;
         }
 
@@ -41,7 +41,7 @@ public class CombinationGeneratorTest {
         ConstraintCell satisfiedConstraint = null;
 
         
-        while((cellCombination = cellCombination.getDown()) != null) {
+        while((cellCombination = cellCombination.getDown()) != this.rootCell) {
             numberOfSatisfiedContrainstsPerRow = 0;
             System.out.print("combination " + cellCombination.getName() + ": ");
             satisfiedConstraint = cellCombination;
@@ -55,10 +55,7 @@ public class CombinationGeneratorTest {
             }
             System.out.println();
             assertEquals(4, numberOfSatisfiedContrainstsPerRow);
-            //last node from calling .getRight() expected to be null
-            assertNull(satisfiedConstraint.getRight());
         }
-        
     }
     
     

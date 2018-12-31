@@ -35,6 +35,17 @@ public class DancingLinks {
         return result;
     }
     
+    //TODO: called in solve
+    public void coverColumn(ConstraintCell cell) {
+        
+    }
+    
+    
+    //TODO: called in solve
+    public void uncoverColumn(ConstraintCell cell) {
+        
+    }
+    
     /**
      * Remove a cell from the candidate matrix by linking it's left and right neighbor
      * cells, which removes itself from the linked list of cells for that row.

@@ -94,18 +94,32 @@ public class SudokuSolverWithDLX {
     
     public void solve() {
 
+        //Knuth DLX: if R[h] = h print solution and return
+        //interpretation: if constraint matrix still has columns that have not yet been satisfied, continue, else end
         
-        // if constraint matrix still has columns with 1s, continue, else end
+        //Knuth DLX: Otherwise chose a column object c
+        //interpretation: select a constraint column from matrix
+        // - non-deterministic approach: chose next available column
+        // - deterministic approach: chose column with least number of 1s
+
+        //Knuth DLX: for each r <- D[c], D[D[c]], ..., while r != c
         
-        // select a constraint column from matrix with least number of 1s
+            //Knuth DLX: set Ok <- r
         
-        // select row in matrix that satisfies this contraint (has a 1 in this column)
-        // note: chose row that has not yet been tried as a solution, implying we need to track which have already been tried
+            //Knuth DLX: for each j <- R[r], R[R[r]], ..., while j != r
         
-        // ? cover what here
+                //Knuth DLX: cover column C[j]
         
-        // repeat
+            //Knuth DLX: search(k+1)
         
+            //Knuth DLX: set r <- Ok and c -< C[r]
+        
+            //Knuth DLX: for each j <- L[r],L[L[r]], ..., while j != r
+        
+                //Knuth: uncover column C[j]
+        
+        //Knuth DLX: uncover column c and return
+    
     }
 
     private void initiateCandidateMatrix() {

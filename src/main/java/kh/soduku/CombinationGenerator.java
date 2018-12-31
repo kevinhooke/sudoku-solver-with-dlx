@@ -81,14 +81,14 @@ public class CombinationGenerator {
         this.linkLastNodeInEachColumnBackToColumnHeaderNode();
         
         //TODO: make circular link from last node in each row back to the row header node
-        //this.linkLastNodeInEachRowBackToRowHeaderNode();
+        this.linkLastNodeInEachRowBackToRowHeaderNode();
         
         System.out.println("Combinations: " + numberOfCombinations);
         return rootNode;
     }
     
     /**
-     * TODO
+     * TODO working, add javadoc
      */
     private void linkLastNodeInEachRowBackToRowHeaderNode() {
         ConstraintCell rowHeader = this.rootNode;
@@ -105,41 +105,45 @@ public class CombinationGenerator {
                 lastCell.setRight(rowHeader);
                 rowHeader.setLeft(lastCell);
             }
-            else {
-                System.out.println("here");
-            }
         }
     }
 
 
     /**
-     * TODO broken for 1:s1 constraint pattern
+     * Sets circular links for each last node in a column back to the column headers
      */
     private void linkLastNodeInEachColumnBackToColumnHeaderNode() {
         
-        //TODO: iterate and set the row headers first
+        //1. iterate and set the row headers first
         // this is causing the npe, not doing this step
-        ConstraintCell columnHeader = this.rootNode;
+        ConstraintCell columnHeader = this.rootNode.getDown();
+        ConstraintCell columnCell;
+        columnCell = columnHeader;
         ConstraintCell lastCell = null;
-        while((columnHeader = columnHeader.getRight()) != null) {
-            //keep the last node
-            lastCell = columnHeader;
+        while((columnCell = columnCell.getDown()) != null) {
+            if(columnCell != null) {
+                lastCell = columnCell;
+            }
         }
-        System.out.println(lastCell.getName());
+        lastCell.setDown(this.rootNode);
+        this.rootNode.setUp(lastCell);
         
-        //now iterate the constraint columns
+        //2. iterate each column, for each column iterate to last node and set link back to header
         columnHeader = this.rootNode;
+        lastCell = null;
+        columnCell = null;
         while((columnHeader = columnHeader.getRight()) != this.rootNode) {
-            ConstraintCell cell = columnHeader;
-            lastCell = null;
-            while((cell = cell.getDown()) != null) {
-                if(cell != null) {
-                    lastCell = cell;
+            columnCell = columnHeader;
+            while((columnCell = columnCell.getDown()) != null) {
+                if(columnCell != null) {
+                    lastCell = columnCell;
                 }
             }
-            //reached last cell, link it back to the column header
-            lastCell.setDown(columnHeader);
-            columnHeader.setUp(lastCell);
+            if(lastCell != null) {
+                //reached last cell, link it back to the row header
+                lastCell.setDown(columnHeader);
+                columnHeader.setUp(lastCell);
+            }
         }
     }
 
@@ -167,50 +171,38 @@ public class CombinationGenerator {
         return previousLinkNodes;
     }
     
-    public PreviousLinkNodes generateNumberInACellConbinations(PreviousLinkNodes previousLinkNodes, 
-            int currentRow, int currentCol, boolean headerNode) {
-        
+    public PreviousLinkNodes generateNumberInACellConbinations(PreviousLinkNodes previousLinkNodes, int currentRow,
+            int currentCol, boolean headerNode) {
+
         ConstraintCell constraintNode = null;
-        
+
         for (int row = 1; row <= MAX_ROWS; row++) {
             for (int col = 1; col <= MAX_COLS; col++) {
                 String nodeName = "n:r" + row + ":c" + col;
                 constraintNode = new ConstraintCell(nodeName);
-//                if(headerNode) {
-//                    constraintNode.setType(NodeType.ConstraintColumnHeader);
-//                    //header nodes are linked together across the row
-//                    constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
-//                    previousLinkNodes.getLastConstraintNode().setRight(constraintNode);
-//                    previousLinkNodes.setLastConstraintNode(constraintNode);
-//                    
-//                    //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
-//                    previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
-//                    
-//                    System.out.print(constraintNode.getName() + " ");
-//                }
-//                else {
-                    //System.out.print(nodeName + " ");
-                    if(currentRow == row && currentCol == col) {
-                        constraintNode.setConstraintSatisfied(1);
-                        constraintNode.setType(NodeType.SatisfiedConstraint);
-                        //assign links to/from this node and previous constraint node in current row
-                        constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
-                        previousLinkNodes.getLastConstraintNode().setRight(constraintNode);
-                        previousLinkNodes.setPreviousValidConstraintNode(constraintNode);
 
-                        ConstraintCell previousNodeInColumn = previousLinkNodes.getPreviousConstraintNodesInColumns().get(constraintNode.getName()); 
-                        //assign links to previous satisfied constraint in same column
-                        constraintNode.setUp(previousNodeInColumn);
-                        previousNodeInColumn.setDown(constraintNode);
-                        
-                        //add this satisfied constraint as the last for this column for building column links
-                        previousLinkNodes.setPreviousConstraintNodeInColumn(constraintNode.getName(), constraintNode);
-                    }
-                    else {
-                        constraintNode.setConstraintSatisfied(0);
-                    }
-                    System.out.print(constraintNode.getConstraintSatisfied());
-                //}
+                if (currentRow == row && currentCol == col) {
+                    constraintNode.setConstraintSatisfied(1);
+                    constraintNode.setType(NodeType.SatisfiedConstraint);
+                    // assign links to/from this node and previous constraint
+                    // node in current row
+                    constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
+                    previousLinkNodes.getLastConstraintNode().setRight(constraintNode);
+                    previousLinkNodes.setPreviousValidConstraintNode(constraintNode);
+
+                    ConstraintCell previousNodeInColumn = previousLinkNodes.getPreviousConstraintNodesInColumns()
+                            .get(constraintNode.getName());
+                    // assign links to previous satisfied constraint in same column
+                    constraintNode.setUp(previousNodeInColumn);
+                    previousNodeInColumn.setDown(constraintNode);
+
+                    // add this satisfied constraint as the last for this column
+                    // for building column links
+                    previousLinkNodes.setPreviousConstraintNodeInColumn(constraintNode.getName(), constraintNode);
+                } else {
+                    constraintNode.setConstraintSatisfied(0);
+                }
+                System.out.print(constraintNode.getConstraintSatisfied());
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);
@@ -241,48 +233,35 @@ public class CombinationGenerator {
     }
 
     
-    public PreviousLinkNodes generateNumberInARowCombinations(PreviousLinkNodes previousLinkNodes, 
-            int currentRow, int currentCol, int currentNum, boolean headerNode) {
+    public PreviousLinkNodes generateNumberInARowCombinations(PreviousLinkNodes previousLinkNodes, int currentRow,
+            int currentCol, int currentNum, boolean headerNode) {
         ConstraintCell constraintNode = null;
         for (int row = 1; row <= MAX_ROWS; row++) {
             for (int num = 1; num <= MAX_NUM; num++) {
                 String nodeName = num + ":r" + row;
                 constraintNode = new ConstraintCell(nodeName);
-                
-//                if(headerNode) {
-//                    constraintNode.setType(NodeType.ConstraintColumnHeader);
-//                    //header nodes are linked together across the row
-//                    constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
-//                    previousLinkNodes.getLastConstraintNode().setRight(constraintNode);
-//                    previousLinkNodes.setLastConstraintNode(constraintNode);
-//                    
-//                    //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
-//                    previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
-//                    
-//                    System.out.print(constraintNode.getName() + " ");
-//                }
-//                else {
-                    if(currentRow == row && currentNum == num) {
-                        constraintNode.setConstraintSatisfied(1);
-                        constraintNode.setType(NodeType.SatisfiedConstraint);
-                        
-                        //assign links to/from this node and previous constraint node
-                        constraintNode.setLeft(previousLinkNodes.getPreviousValidConstraintNode());
-                        previousLinkNodes.getPreviousValidConstraintNode().setRight(constraintNode);
-                        previousLinkNodes.setPreviousValidConstraintNode(constraintNode);
-                        
-                        //assign links to previous satisfied constraint in same column
-                        constraintNode.setUp(previousLinkNodes.getPreviousConstraintNodesInColumns().get(constraintNode.getName()));
-                        previousLinkNodes.getPreviousConstraintNodesInColumns().get(constraintNode.getName()).setDown(constraintNode);
-                        
-                        //add this satisfied constraint as the last for this column for building column links
-                        previousLinkNodes.setPreviousConstraintNodeInColumn(constraintNode.getName(), constraintNode);
-                    }
-                    else {
-                        constraintNode.setConstraintSatisfied(0);
-                    }
-                    System.out.print(constraintNode.getConstraintSatisfied());
-                //}
+                if (currentRow == row && currentNum == num) {
+                    constraintNode.setConstraintSatisfied(1);
+                    constraintNode.setType(NodeType.SatisfiedConstraint);
+
+                    // assign links to/from this node and previous constraint node
+                    constraintNode.setLeft(previousLinkNodes.getPreviousValidConstraintNode());
+                    previousLinkNodes.getPreviousValidConstraintNode().setRight(constraintNode);
+                    previousLinkNodes.setPreviousValidConstraintNode(constraintNode);
+
+                    // assign links to previous satisfied constraint in same column
+                    constraintNode.setUp(
+                            previousLinkNodes.getPreviousConstraintNodesInColumns().get(constraintNode.getName()));
+                    previousLinkNodes.getPreviousConstraintNodesInColumns().get(constraintNode.getName())
+                            .setDown(constraintNode);
+
+                    // add this satisfied constraint as the last for this column
+                    // for building column links
+                    previousLinkNodes.setPreviousConstraintNodeInColumn(constraintNode.getName(), constraintNode);
+                } else {
+                    constraintNode.setConstraintSatisfied(0);
+                }
+                System.out.print(constraintNode.getConstraintSatisfied());
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);
@@ -320,7 +299,7 @@ public class CombinationGenerator {
             for (int num = 1; num <= MAX_NUM; num++) {
                 String nodeName = num + ":c" + col;
                 constraintNode = new ConstraintCell(nodeName);
-                
+                //TODO can this if block be removed?
                 if(headerNode) {
                     constraintNode.setType(NodeType.ConstraintColumnHeader);
                     //header nodes are linked together across the row
@@ -387,51 +366,40 @@ public class CombinationGenerator {
     }
 
     
-    public PreviousLinkNodes generateNumberInASquareCombinations(PreviousLinkNodes previousLinkNodes, 
-            int currentRow, int currentCol, int currentNum, boolean headerNode) {
+    public PreviousLinkNodes generateNumberInASquareCombinations(PreviousLinkNodes previousLinkNodes, int currentRow,
+            int currentCol, int currentNum, boolean headerNode) {
         ConstraintCell constraintNode = null;
-        
+
         for (int square = 1; square <= NUM_SQUARES; square++) {
             for (int num = 1; num <= MAX_NUM; num++) {
                 String nodeName = num + ":s" + square;
-            
+
                 constraintNode = new ConstraintCell(nodeName);
-                
-//                if(headerNode) {
-//                    constraintNode.setType(NodeType.ConstraintColumnHeader);
-//                    //header nodes are linked together across the row
-//                    constraintNode.setLeft(previousLinkNodes.getLastConstraintNode());
-//                    previousLinkNodes.getLastConstraintNode().setRight(constraintNode);
-//                    previousLinkNodes.setLastConstraintNode(constraintNode);
-//                    
-//                    //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
-//                    previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
-//                    
-//                    System.out.print(constraintNode.getName() + " ");
-//                }
-                //else {
-                    //do the current number, row and column satisfy the current square constraint (e.g. 1:s1)
-                    if(currentNum == num && this.rowAndColInSquare(currentCol, currentRow, square)) {
-                        constraintNode.setConstraintSatisfied(1);
-                        constraintNode.setType(NodeType.SatisfiedConstraint);
-                        
-                        //assign links to/from this node and previous constraint node
-                        constraintNode.setLeft(previousLinkNodes.getPreviousValidConstraintNode());
-                        previousLinkNodes.getPreviousValidConstraintNode().setRight(constraintNode);
-                        previousLinkNodes.setPreviousValidConstraintNode(constraintNode);
-                        
-                        //assign links to previous satisfied constraint in same column
-                        constraintNode.setUp(previousLinkNodes.getPreviousConstraintNodesInColumns().get(constraintNode.getName()));
-                        previousLinkNodes.getPreviousConstraintNodesInColumns().get(constraintNode.getName()).setDown(constraintNode);
-                        
-                        //add this satisfied constraint as the last for this column for building column links
-                        previousLinkNodes.setPreviousConstraintNodeInColumn(constraintNode.getName(), constraintNode);
-                    }
-                    else {
-                        constraintNode.setConstraintSatisfied(0);
-                    }
-                    System.out.print(constraintNode.getConstraintSatisfied());   
-                //}
+
+                // do the current number, row and column satisfy the current
+                // square constraint (e.g. 1:s1)
+                if (currentNum == num && this.rowAndColInSquare(currentCol, currentRow, square)) {
+                    constraintNode.setConstraintSatisfied(1);
+                    constraintNode.setType(NodeType.SatisfiedConstraint);
+
+                    // assign links to/from this node and previous constraint node
+                    constraintNode.setLeft(previousLinkNodes.getPreviousValidConstraintNode());
+                    previousLinkNodes.getPreviousValidConstraintNode().setRight(constraintNode);
+                    previousLinkNodes.setPreviousValidConstraintNode(constraintNode);
+
+                    // assign links to previous satisfied constraint in same column
+                    constraintNode.setUp(
+                            previousLinkNodes.getPreviousConstraintNodesInColumns().get(constraintNode.getName()));
+                    previousLinkNodes.getPreviousConstraintNodesInColumns().get(constraintNode.getName())
+                            .setDown(constraintNode);
+
+                    // add this satisfied constraint as the last for this column
+                    // for building column links
+                    previousLinkNodes.setPreviousConstraintNodeInColumn(constraintNode.getName(), constraintNode);
+                } else {
+                    constraintNode.setConstraintSatisfied(0);
+                }
+                System.out.print(constraintNode.getConstraintSatisfied());
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);
@@ -447,12 +415,11 @@ public class CombinationGenerator {
     //row 7-9 col 1-3 = s7
     //row 7-9 col 4-6 = s8
     //row 7-9 col 7-9 = s9
-    //TODO: there's probably a more elagant way of doing this - potential for refactor later
+    //TODO: there's probably a more elegant way of doing this - potential for refactor later
     public boolean rowAndColInSquare(int currentCol, int currentRow, int square) {
         boolean result = false;
         
         //check inputs
-        //TODO calc square range based on max rows and max cols
         if(square < 1 || square > 9 || currentRow < 1 || currentRow > MAX_ROWS 
                 || currentCol < 1 || currentCol > MAX_COLS) {
             throw new IllegalArgumentException();
