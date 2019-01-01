@@ -84,9 +84,6 @@ public class SudokuSolverWithDLX {
             }
             System.out.println("Found candidate node: " + nodeToRemove.getName());
             this.dancingLinks.removeCandidateRow(nodeToRemove);
-            
-            //TODO:need to cover all matching constraints in row AND and other rows with matching constraints in same column
-
         }
     
     
@@ -95,31 +92,42 @@ public class SudokuSolverWithDLX {
     public void solve() {
 
         //Knuth DLX: if R[h] = h print solution and return
-        //interpretation: if constraint matrix still has columns that have not yet been satisfied, continue, else end
-        
-        //Knuth DLX: Otherwise chose a column object c
-        //interpretation: select a constraint column from matrix
-        // - non-deterministic approach: chose next available column
-        // - deterministic approach: chose column with least number of 1s
-
-        //Knuth DLX: for each r <- D[c], D[D[c]], ..., while r != c
-        
-            //Knuth DLX: set Ok <- r
-        
-            //Knuth DLX: for each j <- R[r], R[R[r]], ..., while j != r
-        
-                //Knuth DLX: cover column C[j]
-        
-            //Knuth DLX: search(k+1)
-        
-            //Knuth DLX: set r <- Ok and c -< C[r]
-        
-            //Knuth DLX: for each j <- L[r],L[L[r]], ..., while j != r
-        
-                //Knuth: uncover column C[j]
-        
-        //Knuth DLX: uncover column c and return
-    
+        //interpretation 1: if node on right of root node is the root node, there are no columns left
+        //interpretation 2: if constraint matrix still has columns that have not yet been satisfied, continue, else end
+        if(this.rootNode.getRight() == this.rootNode) {
+            //TODO: print solution
+            System.out.println("end: solution found");
+        }
+        else {
+            System.out.println("columns remaining...");
+            
+            //Knuth DLX: Otherwise chose a column object c
+            //interpretation: select a constraint column from matrix
+            // - non-deterministic approach: chose next available column
+            // - deterministic approach: chose column with least number of 1s
+            //TODO: get next row
+            
+            //Knuth DLX: for each r <- D[c], D[D[c]], ..., while r != c
+            //interpretation: for each row in the current column, moving down
+            
+                //Knuth DLX: set Ok <- r
+                //interpretation: add current row to solution
+            
+                //Knuth DLX: for each j <- R[r], R[R[r]], ..., while j != r
+                //interpretation: for each cell to the right in the current row
+            
+                    //Knuth DLX: cover column C[j]
+            
+                //Knuth DLX: search(k+1)
+            
+                //Knuth DLX: set r <- Ok and c -< C[r]
+            
+                //Knuth DLX: for each j <- L[r],L[L[r]], ..., while j != r
+            
+                    //Knuth: uncover column C[j]
+            
+            //Knuth DLX: uncover column c and return
+        }
     }
 
     private void initiateCandidateMatrix() {

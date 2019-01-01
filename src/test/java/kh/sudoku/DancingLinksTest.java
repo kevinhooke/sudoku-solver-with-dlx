@@ -11,7 +11,11 @@ import kh.soduku.ConstraintColumnNotFoundException;
 import kh.soduku.DancingLinks;
 
 public class DancingLinksTest {
-
+    
+    private static final int INITIAL_CANDIDATE_SOLUTION_ROWS = 9*9*9;
+    
+    //9 rows * 9 columns * 4 constraints
+    private static final int INITIAL_UNSATISIFIED_CONSTRAINTS = 9 * 9 * 4;
     private CombinationGenerator generator = new CombinationGenerator();
     ConstraintCell rootNode = generator.generateConstraintGrid();
     DancingLinks links = new DancingLinks();
@@ -22,12 +26,16 @@ public class DancingLinksTest {
     @Test
     public void countRemainingUnsatisfiedConstraints() {
 
-        int result = links.countRemainingUnsatisfiedConstraints(this.rootNode);
-        
-        //9 rows * 9 columns * 4 constraints
-        assertEquals((9 * 9 * 4), result);
+        int result = this.links.countRemainingUnsatisfiedConstraints(this.rootNode);
+        assertEquals(INITIAL_UNSATISIFIED_CONSTRAINTS, result);
     }    
 
+    @Test
+    public void countRemainingCandidateSolutionRows() {
+        int result = links.countRemainingCandidateSolutionRows(this.rootNode);
+        assertEquals(INITIAL_CANDIDATE_SOLUTION_ROWS, result);
+    }
+    
     @Test
     public void testFindColumnByConstraintName_nr1c1() {
         ConstraintCell cell = this.links.findColumnByConstraintName(this.rootNode, "n:r1:c1");

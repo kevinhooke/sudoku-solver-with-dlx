@@ -23,6 +23,23 @@ public class DancingLinks {
     }
     
     /**
+     * Counts remaining candidate solution combination rows.
+     * @param rootNode
+     * @return
+     */
+    public int countRemainingCandidateSolutionRows(ConstraintCell rootNode) {
+        int remainingCandidateSolutionRows = 0;
+        ConstraintCell candidateSolution = rootNode;
+        //iterate through linked nodes until we end up back at the root node (it's a circularly linked list)
+        //TODO is this not counting the last row?
+        while((candidateSolution = candidateSolution.getDown()) != rootNode) {
+            remainingCandidateSolutionRows++;
+        }
+        
+        return remainingCandidateSolutionRows;
+    }
+    
+    /**
      * Get a combination row using name in format e.g. 3:c2:r1 = 3 in col 2 row 1
      * @param combination
      * @return
@@ -36,8 +53,36 @@ public class DancingLinks {
     }
     
     //TODO: called in solve
-    public void coverColumn(ConstraintCell cell) {
+    public void coverColumn(ConstraintCell startingCell) {
+        //unlink column header
+        startingCell.getLeft().setRight(startingCell.getRight());
+        startingCell.getRight().setLeft(startingCell.getLeft());
         
+        //TODO iterate and unlink all rows for this column
+        ConstraintCell columnCell = startingCell;
+        ConstraintCell rowCell = null;
+        ConstraintCell cellToUnlink = null;
+        ConstraintCell columnToUnlink = null;
+        while((columnCell = columnCell.getDown()) != startingCell) {
+            columnToUnlink = columnCell;
+            //iterate and unlink the cells for this row
+            rowCell = columnCell;
+            while((rowCell = rowCell.getLeft()) != columnCell) {
+                cellToUnlink = rowCell;
+                if(cellToUnlink.getType() == NodeType.Candidate) {
+                    System.out.print("Candidate row: " + cellToUnlink.getName() + " ");
+                }
+                System.out.println("Unlinking: " + cellToUnlink.getName());
+                cellToUnlink.getLeft().setRight(cellToUnlink.getRight());
+                cellToUnlink.getRight().setLeft(cellToUnlink.getLeft());
+                cellToUnlink.getUp().setDown(cellToUnlink.getDown());
+                cellToUnlink.getDown().setUp(cellToUnlink.getUp());
+            }
+            //unlink column
+            //System.out.println("Unlinking: " + columnToUnlink.getName());
+            columnToUnlink.getUp().setDown(columnToUnlink.getDown());
+            columnToUnlink.getDown().setUp(columnToUnlink.getUp());
+        }
     }
     
     
