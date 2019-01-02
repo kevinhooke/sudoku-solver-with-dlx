@@ -32,7 +32,7 @@ public class DancingLinks_MatrixModificationTest {
     }    
 
     @Test
-    public void testCoverColumn_nr1c1() {
+    public void testCoverAndUncoverColumn_nr1c1() {
         
         //initial state
         int initialUnsatisfiedRows = this.links.countRemainingUnsatisfiedConstraints(this.rootNode);
@@ -44,9 +44,17 @@ public class DancingLinks_MatrixModificationTest {
         assertTrue(cell.getName().equals("n:r1:c1"));
         
         this.links.coverColumn(cell);
-        int unsatisfiedRows = this.links.countRemainingUnsatisfiedConstraints(this.rootNode);
-        assertEquals(INITIAL_NUMBER_OF_CONSTRAINTS - 1, unsatisfiedRows);
+        int unsatisfiedConstraints = this.links.countRemainingUnsatisfiedConstraints(this.rootNode);
+        assertEquals(INITIAL_NUMBER_OF_CONSTRAINTS - 1, unsatisfiedConstraints);
         int remainingCandidateRows = this.links.countRemainingCandidateSolutionRows(this.rootNode);
         assertEquals(INITIAL_CANDIDATE_SOLUTION_ROWS - 9, remainingCandidateRows);
+        
+        //now uncover to reverse
+        this.links.uncoverColumn(cell);
+        unsatisfiedConstraints = this.links.countRemainingUnsatisfiedConstraints(this.rootNode);
+        assertEquals(INITIAL_NUMBER_OF_CONSTRAINTS, unsatisfiedConstraints);
+        remainingCandidateRows = this.links.countRemainingCandidateSolutionRows(this.rootNode);
+        assertEquals(INITIAL_CANDIDATE_SOLUTION_ROWS, remainingCandidateRows);
+        
     }
 }

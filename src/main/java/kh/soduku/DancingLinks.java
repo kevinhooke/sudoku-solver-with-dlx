@@ -31,8 +31,8 @@ public class DancingLinks {
         int remainingCandidateSolutionRows = 0;
         ConstraintCell candidateSolution = rootNode;
         //iterate through linked nodes until we end up back at the root node (it's a circularly linked list)
-        //TODO is this not counting the last row?
-        while((candidateSolution = candidateSolution.getDown()) != rootNode) {
+        //test: count up not down, to follow links not removed
+        while((candidateSolution = candidateSolution.getUp()) != rootNode) {
             remainingCandidateSolutionRows++;
         }
         
@@ -52,13 +52,13 @@ public class DancingLinks {
         return result;
     }
     
-    //TODO: called in solve
+    //called in solve
     public void coverColumn(ConstraintCell startingCell) {
         //unlink column header
         startingCell.getLeft().setRight(startingCell.getRight());
         startingCell.getRight().setLeft(startingCell.getLeft());
         
-        //TODO iterate and unlink all rows for this column
+        //iterate and unlink all rows for this column
         ConstraintCell columnCell = startingCell;
         ConstraintCell rowCell = null;
         ConstraintCell cellToUnlink = null;
@@ -72,23 +72,52 @@ public class DancingLinks {
                 if(cellToUnlink.getType() == NodeType.Candidate) {
                     System.out.print("Candidate row: " + cellToUnlink.getName() + " ");
                 }
-                System.out.println("Unlinking: " + cellToUnlink.getName());
-                cellToUnlink.getLeft().setRight(cellToUnlink.getRight());
-                cellToUnlink.getRight().setLeft(cellToUnlink.getLeft());
+                System.out.println("Unlinking: " + cellToUnlink.getName());                
                 cellToUnlink.getUp().setDown(cellToUnlink.getDown());
                 cellToUnlink.getDown().setUp(cellToUnlink.getUp());
             }
-            //unlink column
-            //System.out.println("Unlinking: " + columnToUnlink.getName());
-            columnToUnlink.getUp().setDown(columnToUnlink.getDown());
-            columnToUnlink.getDown().setUp(columnToUnlink.getUp());
+            //unlink the starting column cell
+            System.out.println("Unlinking: " + columnCell.getName());
+            columnCell.getUp().setDown(columnCell.getDown());
         }
     }
     
-    
-    //TODO: called in solve
-    public void uncoverColumn(ConstraintCell cell) {
+    //called in solve
+    public void uncoverColumn(ConstraintCell startingCell) {
+        //link column header
+        System.out.println("linking: " + startingCell.getName());
+        startingCell.getLeft().setRight(startingCell);
+        startingCell.getRight().setLeft(startingCell);
         
+        //iterate and link all rows for this column
+        ConstraintCell columnCell = startingCell;
+        ConstraintCell rowCell = null;
+        ConstraintCell cellToLink = null;
+        ConstraintCell columnToLink = null;
+        //navigate backwards through links
+        while((columnCell = columnCell.getUp()) != startingCell) {
+            columnToLink = columnCell;
+            //iterate and link the cells for this row
+            rowCell = columnCell;
+            while((rowCell = rowCell.getLeft()) != columnCell) {
+                cellToLink = rowCell;
+                if(cellToLink.getType() == NodeType.Candidate) {
+                    System.out.print("Candidate row: " + cellToLink.getName() + " ");
+                }
+                System.out.println("linking: " + cellToLink.getName());
+                //test - is this not needed?
+                //cellToLink.getLeft().setRight(cellToLink);
+                //cellToLink.getRight().setLeft(cellToLink);
+                
+                //relink down to back up
+                cellToLink.getDown().setUp(cellToLink);
+            }
+            //link column
+            System.out.println("linking: " + columnToLink.getName());
+            
+            //relink down links
+            columnToLink.getDown().setUp(columnToLink);
+        }
     }
     
     /**
