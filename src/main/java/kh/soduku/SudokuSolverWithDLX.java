@@ -26,6 +26,9 @@ public class SudokuSolverWithDLX {
     private ConstraintCell rootNode;
     private CombinationGenerator generator = new CombinationGenerator();
     private DancingLinks dancingLinks = new DancingLinks();
+    
+    private int recursiveDepthCount;
+    
     /**
      * List of the given solutions in the puzzle. These are removed from the candidate matrix
      * when the solver starts.
@@ -55,10 +58,21 @@ public class SudokuSolverWithDLX {
      */
     private Map<String, Deque<ConstraintCell>> previouslyTriedCandidateCells = new HashMap<>();
     
+    public static void main(String[] args) {
+        new SudokuSolverWithDLX().run();
+    }
     
     public SudokuSolverWithDLX() {
+
+    }
+    public void run() {
         this.initiateCandidateMatrix();
+        try {
         this.solve();
+        }
+        catch(Error e) {
+            System.out.println("candidate solution rows so far: " + this.potentialSolutionCandiates.size());
+        }
     }
     
     /**
@@ -90,7 +104,8 @@ public class SudokuSolverWithDLX {
     }
     
     public void solve() {
-
+        recursiveDepthCount++;
+        
         //Knuth DLX: if R[h] = h print solution and return
         //interpretation 1: if node on right of root node is the root node, there are no columns left
         //interpretation 2: if constraint matrix still has columns that have not yet been satisfied, continue, else end
@@ -99,35 +114,66 @@ public class SudokuSolverWithDLX {
             System.out.println("end: solution found");
         }
         else {
-            System.out.println("columns remaining...");
+            System.out.println("columns remaining... (depth: " + this.recursiveDepthCount + ")");
             
             //Knuth DLX: Otherwise chose a column object c
             //interpretation: select a constraint column from matrix
             // - non-deterministic approach: chose next available column
             // - deterministic approach: chose column with least number of 1s
-            //TODO: get next row
+            //TODO: get next unsolved column
+            ConstraintCell nextUnsatisfiedColumn = this.getNextColumn(this.rootNode);
+            System.out.println("next column constraint: " + nextUnsatisfiedColumn.getName());
+            this.dancingLinks.coverColumn(nextUnsatisfiedColumn);
+            
+            ConstraintCell columnCell = nextUnsatisfiedColumn;
+            ConstraintCell row = null;
             
             //Knuth DLX: for each r <- D[c], D[D[c]], ..., while r != c
             //interpretation: for each row in the current column, moving down
-            
+            while((columnCell = columnCell.getDown()) != nextUnsatisfiedColumn) {
                 //Knuth DLX: set Ok <- r
                 //interpretation: add current row to solution
-            
+                potentialSolutionCandiates.add(columnCell);
+                row = columnCell;
+                
                 //Knuth DLX: for each j <- R[r], R[R[r]], ..., while j != r
                 //interpretation: for each cell to the right in the current row
-            
+                while((row = row.getRight()) != columnCell) {
                     //Knuth DLX: cover column C[j]
-            
+                    this.dancingLinks.coverColumn(row);
+                }
+                
                 //Knuth DLX: search(k+1)
-            
-                //Knuth DLX: set r <- Ok and c -< C[r]
-            
+                this.solve();
+                
+                //Knuth DLX: set r <- Ok and c <- C[r]
+                columnCell = this.potentialSolutionCandiates.getLast();
+                nextUnsatisfiedColumn = columnCell;
+                ConstraintCell uncoverRow = columnCell;
                 //Knuth DLX: for each j <- L[r],L[L[r]], ..., while j != r
-            
+                while((uncoverRow = uncoverRow.getLeft()) != nextUnsatisfiedColumn ) {
                     //Knuth: uncover column C[j]
-            
+                    this.dancingLinks.uncoverColumn(uncoverRow);
+                }
+            }
             //Knuth DLX: uncover column c and return
+            this.dancingLinks.uncoverColumn(columnCell);
         }
+    }
+
+    /**
+     * Get next column sequentially from the list.
+     * 
+     * Note: the suggested better alterantive is to get the next column with the 
+     * least number of satisfied rows.
+     * 
+     * //TODO: add getNextColumnWithLeastRows() later.
+     * 
+     * @param rootNode
+     * @return
+     */
+    private ConstraintCell getNextColumn(ConstraintCell rootNode) {
+        return rootNode.getRight();
     }
 
     private void initiateCandidateMatrix() {
