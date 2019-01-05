@@ -3,11 +3,12 @@ package kh.sudoku;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+
 import org.junit.Test;
 
 import kh.soduku.CombinationGenerator;
 import kh.soduku.ConstraintCell;
-import kh.soduku.ConstraintColumnNotFoundException;
 import kh.soduku.DancingLinks;
 
 public class DancingLinks_MatrixModificationTest {
@@ -17,7 +18,7 @@ public class DancingLinks_MatrixModificationTest {
     //9 rows * 9 columns * 4 constraints
     private static final int INITIAL_NUMBER_OF_CONSTRAINTS = 9 * 9 * 4;
     private CombinationGenerator generator = new CombinationGenerator();
-    ConstraintCell rootNode = generator.generateConstraintGrid();
+    ConstraintCell rootNode = generator.generateConstraintGrid(new ArrayList<String>());
     DancingLinks links = new DancingLinks();
     
     /**

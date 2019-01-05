@@ -44,12 +44,16 @@ public class DancingLinks {
      * @param combination
      * @return
      */
-    public ConstraintCell getCombinationRowUsingName(String combination) {
-        ConstraintCell result = null; 
-        
-        //TODO
-        
-        return result;
+    public ConstraintCell findCandidateSolutionRowByName(String candidateName, ConstraintCell rootCell) {
+        ConstraintCell cell = rootCell;
+        while(!(cell = cell.getDown()).getName().equals(candidateName)) {
+            // continue
+        }
+        //check we found the right column
+        if(!cell.getName().equals(candidateName)) {
+            throw new ConstraintColumnNotFoundException();
+        }
+        return cell;        
     }
     
     //called in solve
@@ -70,22 +74,23 @@ public class DancingLinks {
             while((rowCell = rowCell.getLeft()) != columnCell) {
                 cellToUnlink = rowCell;
                 if(cellToUnlink.getType() == NodeType.Candidate) {
-                    System.out.print("Candidate row: " + cellToUnlink.getName() + " ");
+                    //System.out.print("Candidate row: " + cellToUnlink.getName() + " ");
                 }
-                System.out.println("Unlinking: " + cellToUnlink.getName());                
+                //System.out.println("Unlinking: " + cellToUnlink.getName());                
                 cellToUnlink.getUp().setDown(cellToUnlink.getDown());
                 cellToUnlink.getDown().setUp(cellToUnlink.getUp());
             }
             //unlink the starting column cell
-            System.out.println("Unlinking: " + columnCell.getName());
-            columnCell.getUp().setDown(columnCell.getDown());
+            //System.out.println("Unlinking: " + columnCell.getName());
+            //test
+            //columnCell.getUp().setDown(columnCell.getDown());
         }
     }
     
     //called in solve
     public void uncoverColumn(ConstraintCell startingCell) {
         //link column header
-        System.out.println("linking: " + startingCell.getName());
+        //System.out.println("linking: " + startingCell.getName());
         startingCell.getLeft().setRight(startingCell);
         startingCell.getRight().setLeft(startingCell);
         
@@ -102,21 +107,24 @@ public class DancingLinks {
             while((rowCell = rowCell.getLeft()) != columnCell) {
                 cellToLink = rowCell;
                 if(cellToLink.getType() == NodeType.Candidate) {
-                    System.out.print("Candidate row: " + cellToLink.getName() + " ");
+                    //System.out.print("Candidate row: " + cellToLink.getName() + " ");
                 }
-                System.out.println("linking: " + cellToLink.getName());
+                //System.out.println("linking: " + cellToLink.getName());
                 //test - is this not needed?
                 //cellToLink.getLeft().setRight(cellToLink);
                 //cellToLink.getRight().setLeft(cellToLink);
                 
                 //relink down to back up
                 cellToLink.getDown().setUp(cellToLink);
+                //test
+                cellToLink.getUp().setDown(cellToLink);
             }
             //link column
-            System.out.println("linking: " + columnToLink.getName());
+            //System.out.println("linking: " + columnToLink.getName());
             
             //relink down links
-            columnToLink.getDown().setUp(columnToLink);
+            //test
+            //columnToLink.getDown().setUp(columnToLink);
         }
     }
     
@@ -131,31 +139,43 @@ public class DancingLinks {
         cell.getRight().setLeft(cell.getLeft());
         
     }
-    
-    public void uncoverCellInMatrix(ConstraintCell cell) {
-        
-        //TODO
-    }
-    
+
     /**
-     * Removes a candidate row from the matrix without adding it to the backtrack list, because this is
-     * a given solution and we don't need to backtrack for these.
+     * Covers a candidate row and it's columns from the matrix. Used to remove a given
+     * solution from the matrix.
+     * 
      * @param row
      */
-    public void removeCandidateRow(ConstraintCell row) {
-        row.getUp().setDown(row.getDown());
-        row.getDown().setUp(row.getUp());
+    public void coverCandidateRow(ConstraintCell startingRowCell) {
+        System.out.println("Covering candidate row: " + startingRowCell.getName());
+        ConstraintCell columnCell = null;
+        ConstraintCell rowCell = startingRowCell;
+        //unlink cells for this row
+        while((rowCell = rowCell.getRight()) != startingRowCell) {
+
+            System.out.println("Unlinking for given solution: " + rowCell.getName());                
+
+            columnCell = rowCell;
+            while((columnCell = columnCell.getDown()) != rowCell) {
+                System.out.println("Unlinking for given solution: " + columnCell.getName());
+//                if(columnCell.getType() == NodeType.ConstraintColumnHeader) {
+//                    //System.out.println("at column header node");
+//                    //also remove left and right links for column header
+//                    columnCell.getLeft().setRight(columnCell.getRight());
+//                    columnCell.getRight().setLeft(columnCell.getLeft());
+//                }
+                columnCell.getLeft().setRight(columnCell.getRight());
+                columnCell.getRight().setLeft(columnCell.getLeft());
+                columnCell.getUp().setDown(columnCell.getDown());
+                columnCell.getDown().setUp(columnCell.getUp());
+            }
+            rowCell.getUp().setDown(rowCell.getDown());
+            rowCell.getDown().setUp(rowCell.getUp());
+        }
+        startingRowCell.getUp().setDown(startingRowCell.getDown());
+        startingRowCell.getDown().setUp(startingRowCell.getUp());
     }
     
-    /**
-     * Removes a column from the matrix, when that constraint has been satisfied.
-     * 
-     * @return
-     */
-    public void removeColumn(ConstraintCell column) {
-        this.coverCellInMatrix(column);
-    }
-
     /**
      * Finds a constraint column by constraint name, e.g. "5:r3:c6"
      * @param rootCell
@@ -172,6 +192,24 @@ public class DancingLinks {
             throw new ConstraintColumnNotFoundException();
         }
         return cell;
+    }
+
+    
+    
+    public ConstraintCell getColumnHeaderForCell(ConstraintCell c) {
+        if(c.getType() == NodeType.ConstraintColumnHeader) {
+            System.out.println("... cell already is column header");
+            return c;
+        }
+        ConstraintCell header = c;
+        //iterate through linked nodes until we end up back at the column header node (it's a circularly linked list)
+        while((header = header.getUp()).getType() != NodeType.ConstraintColumnHeader) {
+            System.out.println("...looking for header");
+        }
+        if(header.getType() !=  NodeType.ConstraintColumnHeader) {
+            throw new ContraintColumnHeaderNotFoundException();
+        }
+        return header;
     }
     
 }

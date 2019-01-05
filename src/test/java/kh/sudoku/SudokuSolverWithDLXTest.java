@@ -1,5 +1,7 @@
 package kh.sudoku;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,7 +14,6 @@ import kh.soduku.SudokuSolverWithDLX;
 
 public class SudokuSolverWithDLXTest {
 
-    private CombinationGenerator generator = new CombinationGenerator();
     private SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
     private DancingLinks links = new DancingLinks();
 
@@ -21,12 +22,15 @@ public class SudokuSolverWithDLXTest {
     String[] cells = {"8:r1:c4", "1:r1:c5", "6:r1:c7", "7:r1:c8"};
     
     @Test
-    public void removeGivenSolutions() {
+    public void testRemoveGivenSolution_1s() {
         String[] testSolution1 = {"8:r1:c4"};
-        List<String> givenCells = Arrays.asList(testSolution1);
-        ConstraintCell rootNode = generator.generateConstraintGrid();
+        List<String> givenSolutions = Arrays.asList(testSolution1);
         
-        this.solver.removeGivenSolutionsFromSolutionMatrix(rootNode, givenCells);
+        ConstraintCell rootNode = this.solver.initiateCandidateMatrix(givenSolutions);
+        int solutionRows = this.links.countRemainingCandidateSolutionRows(rootNode);
+        assertEquals( (9 * 9 * 9) - 1,solutionRows);
         
+        int remainingUnsatisfiedConstraints = this.links.countRemainingUnsatisfiedConstraints(rootNode);
+        assertEquals((9 * 9 * 4) - 4, remainingUnsatisfiedConstraints);
     }
 }

@@ -1,5 +1,8 @@
 package kh.soduku;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CombinationGenerator {
 
     private static final int MAX_NUM = 9;
@@ -11,7 +14,8 @@ public class CombinationGenerator {
     
     public static void main(String[] args) {
         CombinationGenerator generator = new CombinationGenerator();
-        generator.generateConstraintGrid();
+        List<String> solutions = new ArrayList<>();
+        generator.generateConstraintGrid(solutions);
         //generator.generateNumberInACellConbinations();
         //generator.generateNumberInARowCombinations();
         //generator.generateNumberInAColumnCombinations();
@@ -21,9 +25,11 @@ public class CombinationGenerator {
     /**
      * Generates the matrix of candidate cell combinations against set of all possible constraints.
      * 
+     * @param givenSolutions TODO: test this approach
+     * 
      * @return the root cell of the linked list that represents the matrix
      */
-    public ConstraintCell generateConstraintGrid() {
+    public ConstraintCell generateConstraintGrid(List<String> givenSolutions) {
         int numberOfCombinations = 0;
         this.rootNode = new ConstraintCell("root");
         this.rootNode.setType(NodeType.RootNode);
@@ -48,6 +54,10 @@ public class CombinationGenerator {
         //reset back to working from the root
         previousNode = rootNode;
         previousCandidateNode = previousNode;
+        
+        
+        //TODO during solve, 1:c1:c1 is missing in matrix
+        
         
         //generate sparse matrix of candidate rows with linked matching constraint nodes in columns
         //where constraints are met
@@ -83,7 +93,9 @@ public class CombinationGenerator {
         //TODO: make circular link from last node in each row back to the row header node
         this.linkLastNodeInEachRowBackToRowHeaderNode();
         
-        System.out.println("Combinations: " + numberOfCombinations);
+        System.out.println("Combinations prior to removing given solutions: " + numberOfCombinations);
+
+        
         return rootNode;
     }
     

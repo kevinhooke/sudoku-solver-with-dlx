@@ -3,6 +3,8 @@ package kh.sudoku;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+
 import org.junit.Test;
 
 import kh.soduku.CombinationGenerator;
@@ -17,7 +19,7 @@ public class DancingLinksTest {
     //9 rows * 9 columns * 4 constraints
     private static final int INITIAL_UNSATISIFIED_CONSTRAINTS = 9 * 9 * 4;
     private CombinationGenerator generator = new CombinationGenerator();
-    ConstraintCell rootNode = generator.generateConstraintGrid();
+    ConstraintCell rootNode = generator.generateConstraintGrid(new ArrayList<String>());
     DancingLinks links = new DancingLinks();
     
     /**
@@ -64,5 +66,35 @@ public class DancingLinksTest {
     public void testFindColumnByConstraintName_invalidName() {
         ConstraintCell cell = this.links.findColumnByConstraintName(this.rootNode, "invalid");
         assertTrue(cell.getName().equals("n:r1:c1"));
+    }
+    
+    @Test
+    public void testFindCandidateSolutionRowByName_1r1c1() {
+        ConstraintCell cell = this.links.findCandidateSolutionRowByName("1:r1:c1", this.rootNode);
+        assertTrue(cell.getName().equals("1:r1:c1"));
+    }
+
+    @Test
+    public void testFindCandidateSolutionRowByName_2r1c1() {
+        ConstraintCell cell = this.links.findCandidateSolutionRowByName("2:r1:c1", this.rootNode);
+        assertTrue(cell.getName().equals("2:r1:c1"));
+    }
+
+    @Test
+    public void testFindCandidateSolutionRowByName_9r1c9() {
+        ConstraintCell cell = this.links.findCandidateSolutionRowByName("9:r1:c9", this.rootNode);
+        assertTrue(cell.getName().equals("9:r1:c9"));
+    }
+
+    @Test
+    public void testFindCandidateSolutionRowByName_1r2c1() {
+        ConstraintCell cell = this.links.findCandidateSolutionRowByName("1:r2:c1", this.rootNode);
+        assertTrue(cell.getName().equals("1:r2:c1"));
+    }
+    
+    @Test
+    public void testFindCandidateSolutionRowByName_9r9c9() {
+        ConstraintCell cell = this.links.findCandidateSolutionRowByName("9:r9:c9", this.rootNode);
+        assertTrue(cell.getName().equals("9:r9:c9"));
     }
 }

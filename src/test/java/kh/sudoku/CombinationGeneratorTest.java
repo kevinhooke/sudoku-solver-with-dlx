@@ -2,10 +2,10 @@ package kh.sudoku;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Assert;
+import java.util.ArrayList;
+
 import org.junit.Test;
 
 import kh.soduku.CombinationGenerator;
@@ -15,7 +15,7 @@ import kh.soduku.DancingLinks;
 public class CombinationGeneratorTest {
 
     private CombinationGenerator generator = new CombinationGenerator();
-    private ConstraintCell rootCell = generator.generateConstraintGrid();
+    private ConstraintCell rootCell = generator.generateConstraintGrid(new ArrayList<String>());
     
     /**
      * Tests number of generated cell combinations is 9 rows * 9 cells * 9 values (1..9)
