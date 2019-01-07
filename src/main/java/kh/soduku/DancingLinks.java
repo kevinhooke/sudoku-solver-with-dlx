@@ -14,11 +14,14 @@ public class DancingLinks {
     public int countRemainingUnsatisfiedConstraints(ConstraintCell rootNode) {
         int remainingUnsatisfiedConstraints = 0;
         ConstraintCell constraint = rootNode;
+        ConstraintCell lastCell = null;
+        System.out.println("first constraint: " + constraint.getName());
         //iterate through linked nodes until we end up back at the root node (it's a circularly linked list)
         while((constraint = constraint.getRight()) != rootNode) {
+            lastCell = constraint;
             remainingUnsatisfiedConstraints++;
         }
-        
+        System.out.println("last constraint: " + lastCell.getName());
         return remainingUnsatisfiedConstraints;
     }
     

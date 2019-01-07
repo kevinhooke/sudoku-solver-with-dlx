@@ -7,6 +7,8 @@ public class PreviousLinkNodes {
 
     private ConstraintCell previousValidConstraintNode;
     private ConstraintCell lastConstraintNode;
+    private ConstraintCell firstNodeInRow;
+    private ConstraintCell lastNodeInRow;
     
     /**
      * Map of last satisfied constraint for each column. Used to build links between cells in a column.
@@ -43,6 +45,22 @@ public class PreviousLinkNodes {
 
     public void setPreviousConstraintNodesInColumns(Map<String, ConstraintCell> previousConstraintNodesInColumns) {
         this.previousConstraintNodesInColumns = previousConstraintNodesInColumns;
+    }
+
+    public ConstraintCell getFirstNodeInRow() {
+        return firstNodeInRow;
+    }
+
+    public void setFirstNodeInRow(ConstraintCell firstNodeInRow) {
+        this.firstNodeInRow = firstNodeInRow;
+    }
+
+    public ConstraintCell getLastNodeInRow() {
+        return lastNodeInRow;
+    }
+
+    public void setLastNodeInRow(ConstraintCell lastNodeInRow) {
+        this.lastNodeInRow = lastNodeInRow;
     }
     
 }

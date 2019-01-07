@@ -7,12 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
-//TODO missing first candidate in solutions list
-//when we back out we get to 0 and then stop?
-
-
-
 public class SudokuSolverWithDLX {
 
 
@@ -157,10 +151,6 @@ public class SudokuSolverWithDLX {
     public void solve() {
         recursiveDepthCount++;
         
-//        if(recursiveDepthCount == 82) {
-//            this.printSolutionList();
-//            System.exit(0);
-//        }
         if(!endSearch) {
             //Knuth DLX: if R[h] = h print solution and return
             //interpretation 1: if node on right of root node is the root node, there are no columns left
