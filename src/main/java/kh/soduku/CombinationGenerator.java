@@ -75,8 +75,6 @@ public class CombinationGenerator {
                     numberOfCombinations++;
                     System.out.println();                    
                     this.solutionsAddedToMatrix++;
-                    System.out.println("is this the start of the next row");
-                    //TODO last constraint node has a node with constraint satisfied 0 in it, which is wrong
                     //assign circular row links
                     previousLinkNodes.getFirstNodeInRow().setLeft(previousLinkNodes.getPreviousValidConstraintNode());
                     previousLinkNodes.getPreviousValidConstraintNode().setRight(previousLinkNodes.getFirstNodeInRow());
@@ -171,7 +169,10 @@ public class CombinationGenerator {
                     // assign links to/from this node and previous constraint
                     // node in current row
                     //test: assign links to previous in row, but not if the first in the row, we'll do that later
-                    if(col > 1) {
+                    //test: this needs to check first node in a row, not col=1
+                    //if(col > 1) {
+                    //if(!firstConstraintForThisRow) {
+                    else {
                         constraintNode.setLeft(previousLinkNodes.getPreviousValidConstraintNode());
                         previousLinkNodes.getPreviousValidConstraintNode().setRight(constraintNode);
                         previousLinkNodes.setPreviousValidConstraintNode(constraintNode);
@@ -186,6 +187,9 @@ public class CombinationGenerator {
                     // for building column links
                     previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
                     previousLinkNodes.setPreviousValidConstraintNode(constraintNode);
+                    if(firstConstraintForThisRow) {
+                        firstConstraintForThisRow = false;
+                    }
                 } else {
                     constraintNode.setConstraintSatisfied(0);
                 }
@@ -232,12 +236,13 @@ public class CombinationGenerator {
                     constraintNode.setType(NodeType.SatisfiedConstraint);
                     
                     //test: assign links to previous in row, but not if the first in the row, we'll do that later
-                    if(row > 1) {
+                    //test: I think the first node is relevant for the first node in the first set of constraints, but not here?
+                    //if(row > 1) {
                     // assign links to/from this node and previous constraint node
                         constraintNode.setLeft(previousLinkNodes.getPreviousValidConstraintNode());
                         previousLinkNodes.getPreviousValidConstraintNode().setRight(constraintNode);
                         previousLinkNodes.setPreviousValidConstraintNode(constraintNode);
-                    }
+                    //}
                     // assign links to previous satisfied constraint in same column
                     constraintNode.setUp(
                             previousLinkNodes.getPreviousConstraintNodesInColumns().get(nodeName));
@@ -293,11 +298,12 @@ public class CombinationGenerator {
                 if(currentCol == col && currentNum == num) {
                     constraintNode.setConstraintSatisfied(1);
                     constraintNode.setType(NodeType.SatisfiedConstraint);
-                    if(col > 1) {
+                    //test:
+                    //if(col > 1) {
                         constraintNode.setLeft(previousLinkNodes.getPreviousValidConstraintNode());
                         previousLinkNodes.getPreviousValidConstraintNode().setRight(constraintNode);
                         previousLinkNodes.setPreviousValidConstraintNode(constraintNode);
-                    }
+                    //}
                     
                     //assign links to previous satisfied constraint in same column
                     constraintNode.setUp(previousLinkNodes.getPreviousConstraintNodesInColumns().get(nodeName));
@@ -360,12 +366,13 @@ public class CombinationGenerator {
                     constraintNode.setType(NodeType.SatisfiedConstraint);
                     //track last node for circular link
                     previousLinkNodes.setLastConstraintNode(constraintNode);
-                    if(square > 1) {
+                    //test:
+                    //if(square > 1) {
                         // assign links to/from this node and previous constraint node
                         constraintNode.setLeft(previousLinkNodes.getPreviousValidConstraintNode());
                         previousLinkNodes.getPreviousValidConstraintNode().setRight(constraintNode);
                         previousLinkNodes.setPreviousValidConstraintNode(constraintNode);
-                    }
+                    //}
                     // assign links to previous satisfied constraint in same column
                     constraintNode.setUp(
                             previousLinkNodes.getPreviousConstraintNodesInColumns().get(nodeName));

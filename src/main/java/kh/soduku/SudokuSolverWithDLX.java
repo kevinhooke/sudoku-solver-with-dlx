@@ -156,10 +156,10 @@ public class SudokuSolverWithDLX {
             //interpretation 1: if node on right of root node is the root node, there are no columns left
             //interpretation 2: if constraint matrix still has columns that have not yet been satisfied, continue, else end
             if(this.rootNode.getRight() == this.rootNode || 
-                    this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode) == 0 ||
-                    this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode) <= 20){
+                    this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode) == 0) { 
+                    // || this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode) <= 20){
                 //TODO: print solution
-                System.out.println("test exit at 20!");
+                //System.out.println("test exit at 20!");
                 System.out.println("end: solution found");
                 this.printSolutionList();
                 endSearch = true;
@@ -255,12 +255,13 @@ public class SudokuSolverWithDLX {
     }
 
     public ConstraintCell initiateCandidateMatrix(List<String> givenSolutions) {
-        this.rootNode = this.generator.generateConstraintGrid(givenSolutions);
-        
-        for(String givenSolutionName : givenSolutions) {
-            ConstraintCell givenSolutionRow = this.dancingLinks.findCandidateSolutionRowByName(givenSolutionName, this.rootNode);
-            this.dancingLinks.coverCandidateRow(givenSolutionRow);
-        }
+//TODO: this approach using findCandidateSOlutionByRow needs to be updated now we don't have row headers
+                this.rootNode = this.generator.generateConstraintGrid(givenSolutions);
+//        
+//        for(String givenSolutionName : givenSolutions) {
+//            ConstraintCell givenSolutionRow = this.dancingLinks.findCandidateSolutionRowByName(givenSolutionName, this.rootNode);
+//            this.dancingLinks.coverCandidateRow(givenSolutionRow);
+//        }
         return this.rootNode;
     }
     

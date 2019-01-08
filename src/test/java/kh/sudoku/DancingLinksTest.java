@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import kh.soduku.CombinationGenerator;
 import kh.soduku.ConstraintCell;
+import kh.soduku.ConstraintColumnNotFoundException;
 import kh.soduku.DancingLinks;
 
 public class DancingLinksTest {
@@ -40,8 +41,12 @@ public class DancingLinksTest {
         
         ConstraintCell rowCell = cell.getDown();
         assertNotNull(rowCell.getLeft());
-        //TODO: right link is null
+        //navigate through 4 links to circle back to starting node
+        assertEquals(rowCell, rowCell.getLeft().getLeft().getLeft().getLeft());
+        
         assertNotNull(rowCell.getRight());
+        //navigate through 4 links to circle back to starting node
+        assertEquals(rowCell, rowCell.getRight().getRight().getRight().getRight());
     }
 
     @Test
@@ -50,8 +55,29 @@ public class DancingLinksTest {
         
         ConstraintCell rowCell = cell.getDown();
         assertNotNull(rowCell.getLeft());
-        //TODO: right link is null
+        //navigate through 4 links to circle back to starting node
+        assertEquals(rowCell, rowCell.getLeft().getLeft().getLeft().getLeft());
+        
         assertNotNull(rowCell.getRight());
+        //TODO: 4th link broken
+        //navigate through 4 links to circle back to starting node
+        assertEquals(rowCell, rowCell.getRight().getRight().getRight().getRight());
+    }
+    
+    @Test
+    public void testFindColumnByConstraintName_nr2c2_andCheckLinks() {
+        ConstraintCell cell = this.links.findColumnByConstraintName(this.rootNode, "n:r2:c2");
+        
+        ConstraintCell rowCell = cell.getDown();
+        assertNotNull(rowCell.getLeft());
+        assertNotNull(rowCell.getRight());
+        
+        //navigate through 4 links to circle back to starting node
+        assertEquals(rowCell, rowCell.getLeft().getLeft().getLeft().getLeft());
+        
+        //TODO: the 4th satisfied constraint is linked round to the first in the next row, instead of back to first in the row
+        //navigate through 4 links to circle back to starting node
+        assertEquals(rowCell, rowCell.getRight().getRight().getRight().getRight());
     }
     
     @Test
@@ -78,39 +104,8 @@ public class DancingLinksTest {
         assertTrue(cell.getName().equals("1:s1"));
     }
     
-//    @Test(expected = ConstraintColumnNotFoundException.class)
-//    public void testFindColumnByConstraintName_invalidName() {
-//        ConstraintCell cell = this.links.findColumnByConstraintName(this.rootNode, "invalid");
-//        assertTrue(cell.getName().equals("n:r1:c1"));
-//    }
-//    
-//    @Test
-//    public void testFindCandidateSolutionRowByName_1r1c1() {
-//        ConstraintCell cell = this.links.findCandidateSolutionRowByName("1:r1:c1", this.rootNode);
-//        assertTrue(cell.getName().equals("1:r1:c1"));
-//    }
-//
-//    @Test
-//    public void testFindCandidateSolutionRowByName_2r1c1() {
-//        ConstraintCell cell = this.links.findCandidateSolutionRowByName("2:r1:c1", this.rootNode);
-//        assertTrue(cell.getName().equals("2:r1:c1"));
-//    }
-//
-//    @Test
-//    public void testFindCandidateSolutionRowByName_9r1c9() {
-//        ConstraintCell cell = this.links.findCandidateSolutionRowByName("9:r1:c9", this.rootNode);
-//        assertTrue(cell.getName().equals("9:r1:c9"));
-//    }
-//
-//    @Test
-//    public void testFindCandidateSolutionRowByName_1r2c1() {
-//        ConstraintCell cell = this.links.findCandidateSolutionRowByName("1:r2:c1", this.rootNode);
-//        assertTrue(cell.getName().equals("1:r2:c1"));
-//    }
-//    
-//    @Test
-//    public void testFindCandidateSolutionRowByName_9r9c9() {
-//        ConstraintCell cell = this.links.findCandidateSolutionRowByName("9:r9:c9", this.rootNode);
-//        assertTrue(cell.getName().equals("9:r9:c9"));
-//    }
+    @Test(expected = ConstraintColumnNotFoundException.class)
+    public void testFindColumnByConstraintName_invalidName() {
+        ConstraintCell cell = this.links.findColumnByConstraintName(this.rootNode, "invalid");
+    }
 }
