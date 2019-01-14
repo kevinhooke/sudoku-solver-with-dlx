@@ -15,13 +15,13 @@ public class DancingLinks {
         int remainingUnsatisfiedConstraints = 0;
         ConstraintCell constraint = rootNode;
         ConstraintCell lastCell = null;
-        System.out.println("first constraint: " + constraint.getName());
+        //System.out.println("first constraint: " + constraint.getName());
         //iterate through linked nodes until we end up back at the root node (it's a circularly linked list)
         while((constraint = constraint.getRight()) != rootNode) {
             lastCell = constraint;
             remainingUnsatisfiedConstraints++;
         }
-        System.out.println("last constraint: " + lastCell.getName());
+        //System.out.println("last constraint: " + lastCell.getName());
         return remainingUnsatisfiedConstraints;
     }
     
@@ -34,8 +34,19 @@ public class DancingLinks {
         int remainingCandidateSolutionRows = 0;
         ConstraintCell candidateSolution = rootNode;
         //iterate through linked nodes until we end up back at the root node (it's a circularly linked list)
-        //test: count up not down, to follow links not removed
         while((candidateSolution = candidateSolution.getUp()) != rootNode) {
+            remainingCandidateSolutionRows++;
+        }
+        
+        return remainingCandidateSolutionRows;
+    }
+    
+    
+    public int countRemainingCandidateSolutionRowsInColumn(ConstraintCell column) {
+        int remainingCandidateSolutionRows = 0;
+        ConstraintCell candidateSolution = column;
+        //iterate through linked nodes until we end up back at the root node (it's a circularly linked list)
+        while((candidateSolution = candidateSolution.getUp()) != column) {
             remainingCandidateSolutionRows++;
         }
         
@@ -61,74 +72,53 @@ public class DancingLinks {
     
     //called in solve
     public void coverColumn(ConstraintCell startingCell) {
+        System.out.println("Covering column: " + startingCell.getName());
         //unlink column header
-        startingCell.getLeft().setRight(startingCell.getRight());
         startingCell.getRight().setLeft(startingCell.getLeft());
+        startingCell.getLeft().setRight(startingCell.getRight());
         
-        //iterate and unlink all rows for this column
-        ConstraintCell columnCell = startingCell;
-        ConstraintCell rowCell = null;
-        ConstraintCell cellToUnlink = null;
-        ConstraintCell columnToUnlink = null;
-        while((columnCell = columnCell.getDown()) != startingCell) {
-            columnToUnlink = columnCell;
+        //iterate and unlink all rows for this column    
+        for(ConstraintCell row = startingCell.getDown(); row != startingCell; row = row.getDown()) {
             //iterate and unlink the cells for this row
-            rowCell = columnCell;
-            while((rowCell = rowCell.getLeft()) != columnCell) {
-                cellToUnlink = rowCell;
-                if(cellToUnlink.getType() == NodeType.Candidate) {
-                    //System.out.print("Candidate row: " + cellToUnlink.getName() + " ");
-                }
-                //System.out.println("Unlinking: " + cellToUnlink.getName());                
-                cellToUnlink.getUp().setDown(cellToUnlink.getDown());
-                cellToUnlink.getDown().setUp(cellToUnlink.getUp());
+            ConstraintCell rowCell = null;
+            for(rowCell = row.getRight(); rowCell != row; rowCell = rowCell.getRight()) {
+            //while((rowCell = rowCell.getLeft()) != columnCell) {
+                System.out.println("... unlinking: " + rowCell.toString() + " " + rowCell.getName());                
+                rowCell.getUp().setDown(rowCell.getDown());
+                rowCell.getDown().setUp(rowCell.getUp());
             }
-            //unlink the starting column cell
-            //System.out.println("Unlinking: " + columnCell.getName());
             //test
-            //columnCell.getUp().setDown(columnCell.getDown());
+            System.out.println("... unlinking: " + rowCell.toString() + " " + rowCell.getName());                
+            rowCell.getUp().setDown(rowCell.getDown());
+            rowCell.getDown().setUp(rowCell.getUp());
         }
     }
     
     //called in solve
     public void uncoverColumn(ConstraintCell startingCell) {
-        //link column header
-        //System.out.println("linking: " + startingCell.getName());
-        startingCell.getLeft().setRight(startingCell);
-        startingCell.getRight().setLeft(startingCell);
         
         //iterate and link all rows for this column
-        ConstraintCell columnCell = startingCell;
-        ConstraintCell rowCell = null;
-        ConstraintCell cellToLink = null;
-        ConstraintCell columnToLink = null;
-        //navigate backwards through links
-        while((columnCell = columnCell.getUp()) != startingCell) {
-            columnToLink = columnCell;
+        for(ConstraintCell row = startingCell.getUp(); row != startingCell; row = row.getUp()) {
+        //while((columnCell = columnCell.getUp()) != startingCell) {
+
             //iterate and link the cells for this row
-            rowCell = columnCell;
-            while((rowCell = rowCell.getLeft()) != columnCell) {
-                cellToLink = rowCell;
-                if(cellToLink.getType() == NodeType.Candidate) {
-                    //System.out.print("Candidate row: " + cellToLink.getName() + " ");
-                }
-                //System.out.println("linking: " + cellToLink.getName());
-                //test - is this not needed?
-                //cellToLink.getLeft().setRight(cellToLink);
-                //cellToLink.getRight().setLeft(cellToLink);
-                
+            ConstraintCell rowCell = null;
+            for(rowCell = row.getLeft(); rowCell != row; rowCell = rowCell.getLeft()) {
+            //while((rowCell = rowCell.getLeft()) != columnCell) {
                 //relink down to back up
-                cellToLink.getDown().setUp(cellToLink);
-                //test
-                cellToLink.getUp().setDown(cellToLink);
+                System.out.println("... linking: " + rowCell.toString() + " " + rowCell.getName());  
+                rowCell.getDown().setUp(rowCell);
+                rowCell.getUp().setDown(rowCell);
             }
-            //link column
-            //System.out.println("linking: " + columnToLink.getName());
-            
-            //relink down links
-            //test
-            //columnToLink.getDown().setUp(columnToLink);
+            System.out.println("... linking: " + rowCell.toString() + " " + rowCell.getName());  
+            rowCell.getDown().setUp(rowCell);
+            rowCell.getUp().setDown(rowCell);
         }
+        
+        //link column header
+        //System.out.println("linking: " + startingCell.getName());
+        startingCell.getRight().setLeft(startingCell);
+        startingCell.getLeft().setRight(startingCell);
     }
     
     /**
@@ -214,5 +204,7 @@ public class DancingLinks {
         }
         return header;
     }
+
+
     
 }

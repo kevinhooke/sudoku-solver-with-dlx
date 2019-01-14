@@ -5,6 +5,11 @@ import java.util.List;
 
 public class CombinationGenerator {
 
+//    private static final int MAX_NUM = 2;
+//    private static final int MAX_ROWS = 2;
+//    private static final int MAX_COLS = 2;
+//    private static final int NUM_SQUARES = 1;
+
     private static final int MAX_NUM = 9;
     private static final int MAX_ROWS = 9;
     private static final int MAX_COLS = 9;
