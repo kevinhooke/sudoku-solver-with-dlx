@@ -82,15 +82,10 @@ public class DancingLinks {
             //iterate and unlink the cells for this row
             ConstraintCell rowCell = null;
             for(rowCell = row.getRight(); rowCell != row; rowCell = rowCell.getRight()) {
-            //while((rowCell = rowCell.getLeft()) != columnCell) {
-                System.out.println("... unlinking: " + rowCell.toString() + " " + rowCell.getName());                
+                System.out.println("... unlinking: " + rowCell.toString());
                 rowCell.getUp().setDown(rowCell.getDown());
                 rowCell.getDown().setUp(rowCell.getUp());
             }
-            //test
-            System.out.println("... unlinking: " + rowCell.toString() + " " + rowCell.getName());                
-            rowCell.getUp().setDown(rowCell.getDown());
-            rowCell.getDown().setUp(rowCell.getUp());
         }
     }
     
@@ -99,20 +94,14 @@ public class DancingLinks {
         
         //iterate and link all rows for this column
         for(ConstraintCell row = startingCell.getUp(); row != startingCell; row = row.getUp()) {
-        //while((columnCell = columnCell.getUp()) != startingCell) {
-
             //iterate and link the cells for this row
             ConstraintCell rowCell = null;
             for(rowCell = row.getLeft(); rowCell != row; rowCell = rowCell.getLeft()) {
-            //while((rowCell = rowCell.getLeft()) != columnCell) {
-                //relink down to back up
-                System.out.println("... linking: " + rowCell.toString() + " " + rowCell.getName());  
+                //relink
+                //System.out.println("... linking: " + rowCell.toString() + " " + rowCell.getName());  
                 rowCell.getDown().setUp(rowCell);
                 rowCell.getUp().setDown(rowCell);
             }
-            System.out.println("... linking: " + rowCell.toString() + " " + rowCell.getName());  
-            rowCell.getDown().setUp(rowCell);
-            rowCell.getUp().setDown(rowCell);
         }
         
         //link column header

@@ -5,15 +5,17 @@ import java.util.List;
 
 public class CombinationGenerator {
 
-//    private static final int MAX_NUM = 2;
-//    private static final int MAX_ROWS = 2;
-//    private static final int MAX_COLS = 2;
-//    private static final int NUM_SQUARES = 1;
+    //2*2 grid does not satisfy all constraints (1 square is not valid)
+    
+//    public static final int MAX_NUM = 9;
+//    public static final int MAX_ROWS = 3;
+//    public static final int MAX_COLS = 3;
+//    public static final int NUM_SQUARES = 1;
 
-    private static final int MAX_NUM = 9;
-    private static final int MAX_ROWS = 9;
-    private static final int MAX_COLS = 9;
-    private static final int NUM_SQUARES = 9;
+    public static final int MAX_NUM = 9;
+    public static final int MAX_ROWS = 9;
+    public static final int MAX_COLS = 9;
+    public static final int NUM_SQUARES = 9;
     
     private int solutionsAddedToMatrix = 0;
     private ConstraintCell rootNode = null;

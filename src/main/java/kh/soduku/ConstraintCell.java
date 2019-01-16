@@ -86,6 +86,8 @@ public class ConstraintCell {
         this.type = type;
     }
     
-    
+    public String toString() {
+        return this.getName();
+    }
     
 }

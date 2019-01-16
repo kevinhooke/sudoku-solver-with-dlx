@@ -8,10 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public class SudokuSolverWithDLX {
-
-
-    
-
     
     private ConstraintCell rootNode;
     private CombinationGenerator generator = new CombinationGenerator();
@@ -20,11 +16,7 @@ public class SudokuSolverWithDLX {
     private int recursiveDepthCount;
     private boolean endSearch = false;;
     
-    /**
-     * List of the given solutions in the puzzle. These are removed from the candidate matrix
-     * when the solver starts.
-     */
-    private Deque<ConstraintCell> givenSolutionCandidates = new LinkedList<>();
+    private int solutions = 0;
     
     /**
      * LinkedList of the potentialCandiates identified so far
@@ -43,11 +35,6 @@ public class SudokuSolverWithDLX {
      * solution candidate cell is reached. At this point a different candidate solution is chosen.
      */
     private Deque<ConstraintCell> removedConstraintCells = new LinkedList<>();
-    
-    /**
-     * Map of previously tried candidates, keyed by candidate name (e.g. 1:r1:c1)
-     */
-    private Map<String, Deque<ConstraintCell>> previouslyTriedCandidateCells = new HashMap<>();
     
     public static void main(String[] args) {
         new SudokuSolverWithDLX().run();
@@ -119,7 +106,6 @@ public class SudokuSolverWithDLX {
     
     private void printSolutionList() {
         for(ConstraintCell c : this.potentialSolutionCandiates) {
-            //System.out.println(this.getCandiateSolutionNameFromCell(c));
             System.out.println(c.getName());
         }
         
@@ -158,10 +144,7 @@ public class SudokuSolverWithDLX {
                 System.out.println("columns remaining: " 
                         + this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode) 
                         + " (depth: " + this.recursiveDepthCount + ")");
-                
-                System.out.println("current solution rows: ");
-                this.printSolutionList();
-                
+                                
                 //Knuth DLX: Otherwise chose a column object c
                 //interpretation: select a constraint column from matrix
                 // - non-deterministic approach: chose next available column
@@ -172,28 +155,31 @@ public class SudokuSolverWithDLX {
                     return;
                 }
                 System.out.println("next column constraint: " + c.getName());
-                //moving
-                //this.dancingLinks.coverColumn(c);
-
+                
+                this.dancingLinks.coverColumn(c);
                 
                 //Knuth DLX: for each r <- D[c], D[D[c]], ..., while r != c
                 //interpretation: for each row in the current column, moving down
-                //while((r = r.getDown()) != c) {
                 for(ConstraintCell r = c.getDown(); r != c; r = r.getDown()) {
                     //Knuth DLX: set Ok <- r
                     //interpretation: add current row to solution
                     potentialSolutionCandiates.add(r);
                     
-                    this.dancingLinks.coverColumn(c);
-                    
                     //Knuth DLX: for each j <- R[r], R[R[r]], ..., while j != r
                     //interpretation: for each cell to the right in the current row
-                    //TODO: this part I don't think is working as expected
                     ConstraintCell j = r;
                     for(j = r.getRight(); j != r; j = j.getRight()) {
-                    //while((j = j.getRight()) != r) {
                         //Knuth DLX: cover column C[j]
                         this.dancingLinks.coverColumn(this.dancingLinks.getColumnHeaderForCell(j));
+                    }
+
+                    if(this.potentialSolutionCandiates.size() == 81) {
+                        System.out.println("current solution rows: ");
+                        this.printSolutionList();
+                        this.solutions++;
+                        if(this.solutions == 1) {
+                            System.exit(0);
+                        }
                     }
                     
                     //Knuth DLX: search(k+1)
@@ -202,17 +188,16 @@ public class SudokuSolverWithDLX {
                     //Knuth DLX: set r <- Ok and c <- C[r]
 //                    c = this.potentialSolutionCandiates.removeLast();
 //                    r = this.dancingLinks.getColumnHeaderForCell(r);
-                    this.potentialSolutionCandiates.removeLast();
-                    this.dancingLinks.getColumnHeaderForCell(r);
+                    r = this.potentialSolutionCandiates.removeLast();
+                    c = this.dancingLinks.getColumnHeaderForCell(r);
     
-                    //TODO: this part I don't think is working
                     ConstraintCell jj = r;
                     //Knuth DLX: for each j <- L[r],L[L[r]], ..., while j != r
                     for(jj = r.getLeft(); jj != r; jj = jj.getLeft()) {
-                    //while((jj = jj.getLeft()) != r ) {
                         //Knuth: uncover column C[j]
                         this.dancingLinks.uncoverColumn(this.dancingLinks.getColumnHeaderForCell(jj));
                     }
+                    
                 }
                 //Knuth DLX: uncover column c and return
                 this.dancingLinks.uncoverColumn(c);
@@ -224,47 +209,58 @@ public class SudokuSolverWithDLX {
     /**
      * Get next column sequentially from the list.
      * 
-     * Note: the suggested better alterantive is to get the next column with the 
+     * Note: the suggested better alternative is to get the next column with the 
      * least number of satisfied rows.
      * 
-     * //TODO: add getNextColumnWithLeastRows() later.
      * 
      * @param rootNode
      * @return
      */
     private ConstraintCell getNextColumn(ConstraintCell c) {
-        
-        
-        // TODO need to return if we don't have any cols with remaining rows
         int remainingConstraints = this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode);
         int solutionsForColumn = 0;
-        ConstraintCell nextColumn = null;        
-//        while((nextColumn = nextColumn.getRight()) != c
-//                && nextColumn.getType() == NodeType.RootNode
-//                && (solutionsForColumn = this.dancingLinks.countRemainingCandidateSolutionRowsInColumn(nextColumn)) == 0
-//                && this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode) > 0
-//                ) {
-//            System.out.println("...looking for next col with remaining rows, current:" + nextColumn.getName());
-//            remainingConstraints--;
-//        }
-//        if(remainingConstraints == 0 || this.dancingLinks.countRemainingCandidateSolutionRowsInColumn(nextColumn) == 0) {
-//            nextColumn = null;
-//        }
+        ConstraintCell nextColumn = null;   
+        
+        
+        //NOTE: getting the next column based on the next that has any remaining constraints is a terrible approach
+        
+        //get next column based on the next column with least number of constraints remaining
+        //this performs far better than next the next sequential remaining column
+        ConstraintCell colWithLeastRemaining = null;
+        int leastRemaining = 0;
         for(nextColumn = c.getRight(); nextColumn.getRight() != c; nextColumn = nextColumn.getRight()) {
             solutionsForColumn = this.dancingLinks.countRemainingCandidateSolutionRowsInColumn(nextColumn);
-            if(solutionsForColumn > 0) {
-                System.out.println("... remaining rows for column " + nextColumn.getName() + " : " + solutionsForColumn);
-                break;
+
+            if(colWithLeastRemaining == null) {
+                colWithLeastRemaining = nextColumn;
+                leastRemaining = solutionsForColumn;
             }
             else {
-                System.out.println("... remaining rows for column " + nextColumn.getName() + " : " + solutionsForColumn + " ... trying next");
+                if(solutionsForColumn > 0 && solutionsForColumn <= leastRemaining) {
+                    leastRemaining = solutionsForColumn;
+                    colWithLeastRemaining = nextColumn;
+                }
             }
+//            //terrible approach: first with more than 0
+//            if(solutionsForColumn > 0) {
+//                //System.out.println("... remaining rows for column " + nextColumn.getName() + " : " + solutionsForColumn);
+//                break;
+//            }
+//            else {
+//                //System.out.println("... remaining rows for column " + nextColumn.getName() + " : " + solutionsForColumn + " ... trying next");
+//            }
         }
-        return nextColumn;
+        return colWithLeastRemaining;
     }
 
     public ConstraintCell initiateCandidateMatrix(List<String> givenSolutions) {
-//TODO: this approach using findCandidateSOlutionByRow needs to be updated now we don't have row headers
+        
+        
+        
+//TODO: need to initiate and remove given solutions now!
+        
+        
+        
                 this.rootNode = this.generator.generateConstraintGrid(givenSolutions);
 //        
 //        for(String givenSolutionName : givenSolutions) {
