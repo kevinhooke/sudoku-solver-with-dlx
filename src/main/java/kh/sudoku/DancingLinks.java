@@ -1,6 +1,4 @@
-package kh.soduku;
-
-import java.util.List;
+package kh.sudoku;
 
 public class DancingLinks {
 

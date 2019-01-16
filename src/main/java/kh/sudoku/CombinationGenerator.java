@@ -1,4 +1,4 @@
-package kh.soduku;
+package kh.sudoku;
 
 import java.util.ArrayList;
 import java.util.List;

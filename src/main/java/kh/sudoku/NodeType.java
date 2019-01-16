@@ -1,4 +1,4 @@
-package kh.soduku;
+package kh.sudoku;
 
 public enum NodeType {
 

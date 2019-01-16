@@ -11,10 +11,6 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import kh.soduku.CombinationGenerator;
-import kh.soduku.ConstraintCell;
-import kh.soduku.DancingLinks;
-
 public class CombinationGeneratorTest {
 
     private CombinationGenerator generator = new CombinationGenerator();

@@ -1,16 +1,9 @@
 package kh.sudoku;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-
-import kh.soduku.CombinationGenerator;
-import kh.soduku.ConstraintCell;
-import kh.soduku.DancingLinks;
-import kh.soduku.SudokuSolverWithDLX;
 
 public class SudokuSolverWithDLXTest {
 

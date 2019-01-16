@@ -5,15 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Test;
-
-import kh.soduku.CombinationGenerator;
-import kh.soduku.ConstraintCell;
-import kh.soduku.ConstraintColumnNotFoundException;
-import kh.soduku.DancingLinks;
 
 public class DancingLinksTest {
     

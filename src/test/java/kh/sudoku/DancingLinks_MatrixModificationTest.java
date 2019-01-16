@@ -7,10 +7,6 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import kh.soduku.CombinationGenerator;
-import kh.soduku.ConstraintCell;
-import kh.soduku.DancingLinks;
-
 public class DancingLinks_MatrixModificationTest {
     
     private static final int INITIAL_CANDIDATE_SOLUTION_ROWS = 9*9*9;
