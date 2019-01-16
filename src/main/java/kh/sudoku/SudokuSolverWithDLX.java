@@ -21,19 +21,6 @@ public class SudokuSolverWithDLX {
      */
     private Deque<ConstraintCell> potentialSolutionCandiates = new LinkedList<>();
     
-    /**
-     * Linked list of constraint cells removed from the matrix each time a potential solution row
-     * is chosen. This list is used to backtrack or uncover previously removed nodes to retry
-     * another solution.
-     * 
-     * When nodes are removed, the solution candidate cell is added first (the row header cell on the left
-     * of the matrix) followed by each of the removed already covered cells.
-     * 
-     * To backtrack, each of the removed cells is uncovered / added back in to the matrix until the last
-     * solution candidate cell is reached. At this point a different candidate solution is chosen.
-     */
-    private Deque<ConstraintCell> removedConstraintCells = new LinkedList<>();
-    
     public static void main(String[] args) {
         new SudokuSolverWithDLX().run();
     }
