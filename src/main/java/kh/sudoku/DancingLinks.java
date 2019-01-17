@@ -80,7 +80,7 @@ public class DancingLinks {
             //iterate and unlink the cells for this row
             ConstraintCell rowCell = null;
             for(rowCell = row.getRight(); rowCell != row; rowCell = rowCell.getRight()) {
-                System.out.println("... unlinking: " + rowCell.toString());
+                //System.out.println("... unlinking: " + rowCell.toString());
                 rowCell.getUp().setDown(rowCell.getDown());
                 rowCell.getDown().setUp(rowCell.getUp());
             }

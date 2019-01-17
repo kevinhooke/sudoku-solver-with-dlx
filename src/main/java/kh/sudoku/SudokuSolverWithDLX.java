@@ -22,6 +22,8 @@ public class SudokuSolverWithDLX {
      */
     private Deque<ConstraintCell> potentialSolutionCandiates = new LinkedList<>();
     
+    private List<String> givenSolutions = new ArrayList<>();
+    
     public static void main(String[] args) {
         new SudokuSolverWithDLX().run();
     }
@@ -43,48 +45,58 @@ public class SudokuSolverWithDLX {
     */
     
     public void run() {
-        List<String> givenSolutions = new ArrayList<>();
-        givenSolutions.add("8:r1:c4");
-        givenSolutions.add("1:r1:c5");
-        givenSolutions.add("6:r1:c7");
-        givenSolutions.add("7:r1:c8");
-        givenSolutions.add("7:r2:c3");
-        givenSolutions.add("4:r2:c4");
-        givenSolutions.add("9:r2:c5");
-        givenSolutions.add("2:r2:c7");
-        givenSolutions.add("8:r2:c9");
-        givenSolutions.add("6:r3:c2");
-        givenSolutions.add("5:r3:c5");
-        givenSolutions.add("1:r3:c7");
-        givenSolutions.add("4:r3:c9");
-        givenSolutions.add("1:r4:c1");
-        givenSolutions.add("3:r4:c6");
-        givenSolutions.add("9:r4:c7");
-        givenSolutions.add("4:r5:c1");
-        givenSolutions.add("8:r5:c5");
-        givenSolutions.add("7:r5:c9");
-        givenSolutions.add("6:r6:c3");
-        givenSolutions.add("9:r6:c4");
-        givenSolutions.add("3:r6:c9");
-        givenSolutions.add("9:r7:c1");
-        givenSolutions.add("2:r7:c3");
-        givenSolutions.add("3:r7:c5");
-        givenSolutions.add("6:r7:c8");
-        givenSolutions.add("6:r8:c1");
-        givenSolutions.add("1:r8:c3");
-        givenSolutions.add("7:r8:c5");
-        givenSolutions.add("4:r8:c6");
-        givenSolutions.add("3:r8:c7");
-        givenSolutions.add("3:r9:c2");
-        givenSolutions.add("4:r9:c3");
-        givenSolutions.add("6:r9:c5");
-        givenSolutions.add("9:r9:c6");
-        this.initiateCandidateMatrix(givenSolutions);
+        GridOutputWriter writer = new GridOutputWriter();
+        
+        
+//        givenSolutions.add("8:r1:c4");
+//        givenSolutions.add("1:r1:c5");
+//        givenSolutions.add("6:r1:c7");
+//        givenSolutions.add("7:r1:c8");
+//        givenSolutions.add("7:r2:c3");
+//        givenSolutions.add("4:r2:c4");
+//        givenSolutions.add("9:r2:c5");
+//        givenSolutions.add("2:r2:c7");
+//        givenSolutions.add("8:r2:c9");
+//        givenSolutions.add("6:r3:c2");
+//        givenSolutions.add("5:r3:c5");
+//        givenSolutions.add("1:r3:c7");
+//        givenSolutions.add("4:r3:c9");
+//        givenSolutions.add("1:r4:c1");
+//        givenSolutions.add("3:r4:c6");
+//        givenSolutions.add("9:r4:c7");
+//        givenSolutions.add("4:r5:c1");
+//        givenSolutions.add("8:r5:c5");
+//        givenSolutions.add("7:r5:c9");
+//        givenSolutions.add("6:r6:c3");
+//        givenSolutions.add("9:r6:c4");
+//        givenSolutions.add("3:r6:c9");
+//        givenSolutions.add("9:r7:c1");
+//        givenSolutions.add("2:r7:c3");
+//        givenSolutions.add("3:r7:c5");
+//        givenSolutions.add("6:r7:c8");
+//        givenSolutions.add("6:r8:c1");
+//        givenSolutions.add("1:r8:c3");
+//        givenSolutions.add("7:r8:c5");
+//        givenSolutions.add("4:r8:c6");
+//        givenSolutions.add("3:r8:c7");
+//        givenSolutions.add("3:r9:c2");
+//        givenSolutions.add("4:r9:c3");
+//        givenSolutions.add("6:r9:c5");
+//        givenSolutions.add("9:r9:c6");
+        
+        System.out.println("Starting puzzle:");
+        writer.writeGrid(givenSolutions, 9, 9);
+        
+        //initial with givens
+        //this.initiateCandidateMatrix(givenSolutions);
+        
+        //initialize with no givens
+        this.initiateCandidateMatrix(new ArrayList<String>());
         try {
             this.solve();
             System.out.println("... search ended, nodes in solution list: " + this.potentialSolutionCandiates.size());
             this.printSolutionList();
-            GridOutputWriter writer = new GridOutputWriter();
+            
             writer.writeGrid(this.convertSolutionCandidateListToListString(), 3, 3);
         }
         catch(Error e) {
@@ -97,6 +109,10 @@ public class SudokuSolverWithDLX {
         for(ConstraintCell c : this.potentialSolutionCandiates) {
             values.add(c.getName());
         }
+        
+        //TODO
+        values.addAll(this.givenSolutions);
+        
         return values;
     }
     
@@ -169,7 +185,8 @@ public class SudokuSolverWithDLX {
                         this.dancingLinks.coverColumn(this.dancingLinks.getColumnHeaderForCell(j));
                     }
 
-                    if(this.potentialSolutionCandiates.size() == CombinationGenerator.MAX_COLS * CombinationGenerator.MAX_ROWS) {
+                    //TODO: adding in the given solutions, this calc is no longer true
+                    if(this.potentialSolutionCandiates.size() == (CombinationGenerator.MAX_COLS * CombinationGenerator.MAX_ROWS) - this.givenSolutions.size()) {
                         System.out.println("current solution rows: ");
                         this.printSolutionList();
                         GridOutputWriter writer = new GridOutputWriter();
@@ -184,8 +201,6 @@ public class SudokuSolverWithDLX {
                     this.solve();
                     
                     //Knuth DLX: set r <- Ok and c <- C[r]
-//                    c = this.potentialSolutionCandiates.removeLast();
-//                    r = this.dancingLinks.getColumnHeaderForCell(r);
                     r = this.potentialSolutionCandiates.removeLast();
                     c = this.dancingLinks.getColumnHeaderForCell(r);
     
@@ -252,19 +267,7 @@ public class SudokuSolverWithDLX {
     }
 
     public ConstraintCell initiateCandidateMatrix(List<String> givenSolutions) {
-        
-        
-        
-//TODO: need to initiate and remove given solutions now!
-        
-        
-        
-                this.rootNode = this.generator.generateConstraintGrid(givenSolutions);
-//        
-//        for(String givenSolutionName : givenSolutions) {
-//            ConstraintCell givenSolutionRow = this.dancingLinks.findCandidateSolutionRowByName(givenSolutionName, this.rootNode);
-//            this.dancingLinks.coverCandidateRow(givenSolutionRow);
-//        }
+        this.rootNode = this.generator.generateConstraintGrid(givenSolutions);
         return this.rootNode;
     }
     
