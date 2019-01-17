@@ -1,6 +1,7 @@
 package kh.sudoku;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,10 +84,20 @@ public class SudokuSolverWithDLX {
             this.solve();
             System.out.println("... search ended, nodes in solution list: " + this.potentialSolutionCandiates.size());
             this.printSolutionList();
+            GridOutputWriter writer = new GridOutputWriter();
+            writer.writeGrid(this.convertSolutionCandidateListToListString(), 3, 3);
         }
         catch(Error e) {
             System.out.println("candidate solution rows so far: " + this.potentialSolutionCandiates.size());
         }
+    }
+    
+    private List<String> convertSolutionCandidateListToListString(){
+        List<String> values = new ArrayList<>();
+        for(ConstraintCell c : this.potentialSolutionCandiates) {
+            values.add(c.getName());
+        }
+        return values;
     }
     
     private void printSolutionList() {
@@ -158,9 +169,11 @@ public class SudokuSolverWithDLX {
                         this.dancingLinks.coverColumn(this.dancingLinks.getColumnHeaderForCell(j));
                     }
 
-                    if(this.potentialSolutionCandiates.size() == 81) {
+                    if(this.potentialSolutionCandiates.size() == CombinationGenerator.MAX_COLS * CombinationGenerator.MAX_ROWS) {
                         System.out.println("current solution rows: ");
                         this.printSolutionList();
+                        GridOutputWriter writer = new GridOutputWriter();
+                        writer.writeGrid(this.convertSolutionCandidateListToListString(), 9, 9);
                         this.solutions++;
                         if(this.solutions == 1) {
                             System.exit(0);

@@ -24,10 +24,6 @@ public class CombinationGenerator {
         CombinationGenerator generator = new CombinationGenerator();
         List<String> solutions = new ArrayList<>();
         generator.generateConstraintGrid(solutions);
-        //generator.generateNumberInACellConbinations();
-        //generator.generateNumberInARowCombinations();
-        //generator.generateNumberInAColumnCombinations();
-        //generator.generateNumberInASquareCombinations();
     }
 
     /**
@@ -71,9 +67,6 @@ public class CombinationGenerator {
                 for (int num = 1; num <= MAX_NUM; num++) {
                     String solutionName = num + ":r" + row + ":c" + col;
                     System.out.print(solutionName + " ");
-
-                    //TODO: left and right links are missing on first node in col
-                    //see > 1 check... need to manually add links for first node
                     
                     previousLinkNodes = this.generateNumberInACellCombinations(solutionName, previousLinkNodes, row, col, false);
                     previousLinkNodes = this.generateNumberInARowCombinations(solutionName, previousLinkNodes, row, col, num, false);
