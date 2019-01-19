@@ -1,5 +1,8 @@
 package kh.sudoku;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ConstraintCell {
 
 
@@ -11,6 +14,12 @@ public class ConstraintCell {
     private ConstraintCell left;
     private ConstraintCell right;
     private NodeType type;
+    
+    /**
+     * Map of the first node in each row, keyed by candidate solution name. This
+     * is only populated for the root node, and allows a quick way to remove the given solution rows.
+     */
+    private Map<String, ConstraintCell> candidateRowFirstNodes;
     
     public ConstraintCell(String name) {
         super();
@@ -88,6 +97,18 @@ public class ConstraintCell {
     
     public String toString() {
         return this.getName();
+    }
+
+    public Map<String, ConstraintCell> getCandidateRowFirstNodes() {
+        
+        if(this.candidateRowFirstNodes == null){
+            this.candidateRowFirstNodes = new HashMap<>();
+        }
+        return candidateRowFirstNodes;
+    }
+
+    public void setCandidateRowFirstNodes(Map<String, ConstraintCell> candidateRowFirstNodes) {
+        this.candidateRowFirstNodes = candidateRowFirstNodes;
     }
     
 }

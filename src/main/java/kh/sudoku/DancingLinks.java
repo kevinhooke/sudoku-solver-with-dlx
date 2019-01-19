@@ -86,6 +86,26 @@ public class DancingLinks {
             }
         }
     }
+
+    public void coverColumnForGivenSolution(ConstraintCell startingCell) {
+        System.out.println("Covering column: " + startingCell.getName());
+        //unlink column header
+        startingCell.getRight().setLeft(startingCell.getLeft());
+        startingCell.getLeft().setRight(startingCell.getRight());
+        
+        //iterate and unlink all rows for this column    
+        for(ConstraintCell row = startingCell.getDown(); row != startingCell; row = row.getDown()) {
+            //iterate and unlink the cells for this row
+            ConstraintCell rowCell = null;
+            for(rowCell = row.getRight(); rowCell != row; rowCell = rowCell.getRight()) {
+                //System.out.println("... unlinking: " + rowCell.toString());
+                rowCell.getUp().setDown(rowCell.getDown());
+                rowCell.getDown().setUp(rowCell.getUp());
+            }
+            row.getUp().setDown(rowCell.getDown());
+            row.getDown().setUp(rowCell.getUp());
+        }
+    }
     
     //called in solve
     public void uncoverColumn(ConstraintCell startingCell) {
@@ -126,34 +146,26 @@ public class DancingLinks {
      * 
      * @param row
      */
-    public void coverCandidateRow(ConstraintCell startingRowCell) {
-        System.out.println("Covering candidate row: " + startingRowCell.getName());
-        ConstraintCell columnCell = null;
-        ConstraintCell rowCell = startingRowCell;
-        //unlink cells for this row
-        while((rowCell = rowCell.getRight()) != startingRowCell) {
-
-            System.out.println("Unlinking for given solution: " + rowCell.getName());                
-
-            columnCell = rowCell;
-            while((columnCell = columnCell.getDown()) != rowCell) {
-                System.out.println("Unlinking for given solution: " + columnCell.getName());
-//                if(columnCell.getType() == NodeType.ConstraintColumnHeader) {
-//                    //System.out.println("at column header node");
-//                    //also remove left and right links for column header
-//                    columnCell.getLeft().setRight(columnCell.getRight());
-//                    columnCell.getRight().setLeft(columnCell.getLeft());
-//                }
-                columnCell.getLeft().setRight(columnCell.getRight());
-                columnCell.getRight().setLeft(columnCell.getLeft());
-                columnCell.getUp().setDown(columnCell.getDown());
-                columnCell.getDown().setUp(columnCell.getUp());
-            }
-            rowCell.getUp().setDown(rowCell.getDown());
-            rowCell.getDown().setUp(rowCell.getUp());
+    public void coverCandidateRow(ConstraintCell rootNode, String candidateRowName) {
+        
+        //TODO: missing the s constraint here, so only 3 columns being removed
+        
+        
+        ConstraintCell firstRowNode = rootNode.getCandidateRowFirstNodes().get(candidateRowName);
+        System.out.println("Covering candidate row: " + firstRowNode.getName());
+        ConstraintCell j = firstRowNode;
+        
+        System.out.println("... checking: " + j.hashCode());
+        System.out.println("... checking: " + j.getRight().hashCode());
+        System.out.println("... checking: " + j.getRight().getRight().hashCode());
+        System.out.println("... checking: " + j.getRight().getRight().getRight().hashCode());
+        for(j = firstRowNode.getRight(); j != firstRowNode; j = j.getRight()) {
+            System.out.println("... covering for cell: " + j.hashCode());
+            //Knuth DLX: cover column C[j]
+            this.coverColumnForGivenSolution(this.getColumnHeaderForCell(j));
         }
-        startingRowCell.getUp().setDown(startingRowCell.getDown());
-        startingRowCell.getDown().setUp(startingRowCell.getUp());
+        //and cover for the firstNode
+        this.coverColumnForGivenSolution(this.getColumnHeaderForCell(firstRowNode));
     }
     
     /**

@@ -163,13 +163,17 @@ public class CombinationGenerator {
 
                 //if current row and column match then this is a satisfied constraint, and if this solution name is not in
                 //in the list of given solutions, add it to the sparse matrix, otherwise skip it
-                if (currentRow == row && currentCol == col && !givenSolutions.contains(solutionName)) {
+                //&& !givenSolutions.contains(solutionName)
+                if (currentRow == row && currentCol == col ) {
                     constraintNode.setConstraintSatisfied(1);
                     constraintNode.setType(NodeType.SatisfiedConstraint);
                     
                     if(firstConstraintForThisRow) {
                         previousLinkNodes.setFirstNodeInRow(constraintNode);
                         firstConstraintForThisRow = false;
+                        
+                        //keep track of first node in each row to help with given solution removal
+                        this.rootNode.getCandidateRowFirstNodes().put(solutionName, constraintNode);
                     }
                     // assign links to/from this node and previous constraint
                     // node in current row
@@ -232,7 +236,8 @@ public class CombinationGenerator {
             for (int num = 1; num <= MAX_NUM; num++) {
                 String nodeName = num + ":r" + row;
                 constraintNode = new ConstraintCell(solutionName);
-                if (currentRow == row && currentNum == num && !givenSolutions.contains(solutionName)) {
+                //&& !givenSolutions.contains(solutionName)
+                if (currentRow == row && currentNum == num ) {
                     constraintNode.setConstraintSatisfied(1);
                     constraintNode.setType(NodeType.SatisfiedConstraint);
 
@@ -292,7 +297,8 @@ public class CombinationGenerator {
                 String nodeName = num + ":c" + col;
                 constraintNode = new ConstraintCell(solutionName);
 
-                if(currentCol == col && currentNum == num && !givenSolutions.contains(solutionName)) {
+                //&& !givenSolutions.contains(solutionName)
+                if(currentCol == col && currentNum == num ) {
                     constraintNode.setConstraintSatisfied(1);
                     constraintNode.setType(NodeType.SatisfiedConstraint);
                     constraintNode.setLeft(previousLinkNodes.getPreviousValidConstraintNode());
@@ -355,7 +361,8 @@ public class CombinationGenerator {
 
                 // do the current number, row and column satisfy the current
                 // square constraint (e.g. 1:s1)
-                if (currentNum == num && this.rowAndColInSquare(currentCol, currentRow, square) && !givenSolutions.contains(solutionName)) {
+                //&& !givenSolutions.contains(solutionName)
+                if (currentNum == num && this.rowAndColInSquare(currentCol, currentRow, square)) {
                     constraintNode.setConstraintSatisfied(1);
                     constraintNode.setType(NodeType.SatisfiedConstraint);
                     //track last node for circular link

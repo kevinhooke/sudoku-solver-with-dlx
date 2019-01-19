@@ -28,6 +28,47 @@ public class DancingLinksTest {
         assertEquals(INITIAL_UNSATISIFIED_CONSTRAINTS, result);
     }    
     
+    /**
+     * Tests in the initial constraint matrix there are 9 * 9 * 4 = 324 constraint columns. 
+     */
+    @Test
+    public void countRemainingUnsatisfiedConstraints() {
+
+        int result = this.links.countRemainingUnsatisfiedConstraints(this.rootNode);
+        
+        assertEquals(INITIAL_UNSATISIFIED_CONSTRAINTS, result);
+    }    
+
+    
+    
+    @Test
+    public void testCoverAndUncoverColumn_nr1c1() {
+        
+        //initial state
+        int initialUnsatisfiedRows = this.links.countRemainingUnsatisfiedConstraints(this.rootNode);
+        assertEquals(INITIAL_UNSATISIFIED_CONSTRAINTS, initialUnsatisfiedRows);
+        //TODO: with removal of row headers, there's no easy way to get this count
+//        int initialCandidateRows = this.links.countRemainingCandidateSolutionRows(this.rootNode);
+//        assertEquals(INITIAL_CANDIDATE_SOLUTION_ROWS, initialCandidateRows);
+        
+        ConstraintCell cell = this.links.findColumnByConstraintName(this.rootNode, "n:r1:c1");
+        assertTrue(cell.getName().equals("n:r1:c1"));
+        
+        this.links.coverColumn(cell);
+        int unsatisfiedConstraints = this.links.countRemainingUnsatisfiedConstraints(this.rootNode);
+        assertEquals(INITIAL_UNSATISIFIED_CONSTRAINTS - 1, unsatisfiedConstraints);
+//        int remainingCandidateRows = this.links.countRemainingCandidateSolutionRows(this.rootNode);
+//        assertEquals(INITIAL_CANDIDATE_SOLUTION_ROWS - 9, remainingCandidateRows);
+        
+        //now uncover to reverse
+        this.links.uncoverColumn(cell);
+        unsatisfiedConstraints = this.links.countRemainingUnsatisfiedConstraints(this.rootNode);
+        assertEquals(INITIAL_UNSATISIFIED_CONSTRAINTS, unsatisfiedConstraints);
+//        remainingCandidateRows = this.links.countRemainingCandidateSolutionRows(this.rootNode);
+//        assertEquals(INITIAL_CANDIDATE_SOLUTION_ROWS, remainingCandidateRows);
+        
+    }
+    
     @Test
     public void testFindColumnByConstraintName_nr1c1_andCheckLinks() {
         ConstraintCell cell = this.links.findColumnByConstraintName(this.rootNode, "n:r1:c1");

@@ -21,6 +21,11 @@ public class CombinationGeneratorTest {
         assertEquals(9*9*9, this.generator.getSolutionsAddedToMatrix());
     }
 
+    @Test
+    public void testCandidateRowsTrackedInRootNodeMap() {
+        System.out.println("Candidate solution rows: " + this.rootCell.getCandidateRowFirstNodes().size());
+    }
+    
     //TODO: this is not working
 //    @Test
     public void testSatisfiedConstraintsPerRow() {
@@ -90,7 +95,7 @@ public class CombinationGeneratorTest {
     }
 
     /**
-     * Column 1 constraint is n:c1:r1.
+     * Column 1 constraint is n:r1:c1.
      * Expected result: there's 9 valid candidates to satisfy this constraint
      */
     @Test
@@ -171,8 +176,7 @@ public class CombinationGeneratorTest {
     
     /**
      * Test constraint column 1:s1.
-     * TODO: 1:s1 in column header linking doesn't currently have any linked nodes in column
-     * something not working in the x:s constraints
+     * Expected result: there's 9 valid candidates to satisfy this constraint
      */
     @Test
     public void checkLinkedConstraintsForColumn_1s1() {
