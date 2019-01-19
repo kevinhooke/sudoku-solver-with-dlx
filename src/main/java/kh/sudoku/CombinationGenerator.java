@@ -3,6 +3,9 @@ package kh.sudoku;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class CombinationGenerator {
 
     //2*2 grid does not satisfy all constraints (1 square is not valid)
@@ -19,6 +22,8 @@ public class CombinationGenerator {
     
     private int solutionsAddedToMatrix = 0;
     private ConstraintCell rootNode = null;
+    
+    private static final Logger LOGGER = LogManager.getLogger();
     
     public static void main(String[] args) {
         CombinationGenerator generator = new CombinationGenerator();
@@ -68,9 +73,6 @@ public class CombinationGenerator {
                     String solutionName = num + ":r" + row + ":c" + col;
                     System.out.print(solutionName + " ");
                     
-                    //TODO removal of given solutions approach is not currently working
-                    //need to fo a cover for a the column for each of the givens
-                    
                     previousLinkNodes = this.generateNumberInACellCombinations(solutionName, previousLinkNodes, givenSolutions, row, col, false);
                     previousLinkNodes = this.generateNumberInARowCombinations(solutionName, previousLinkNodes, givenSolutions, row, col, num, false);
                     previousLinkNodes = this.generateNumberInAColumnCombinations(solutionName, previousLinkNodes, givenSolutions, col, num, false);
@@ -90,7 +92,7 @@ public class CombinationGenerator {
         //make circular link from last node in each column back to column header node
         this.linkLastNodeInEachColumnBackToColumnHeaderNode();
 
-        System.out.println("Combinations: " + numberOfCombinations);
+        LOGGER.info("Combinations: " + numberOfCombinations);
         
         return rootNode;
     }
@@ -108,7 +110,7 @@ public class CombinationGenerator {
         lastCell = null;
         columnCell = null;
         while((columnHeader = columnHeader.getRight()) != this.rootNode) {
-            System.out.println("linkLastNodeInEachColumnBackToColumnHeaderNode : " + columnHeader.getName());
+            LOGGER.debug("linkLastNodeInEachColumnBackToColumnHeaderNode : " + columnHeader.getName());
             columnCell = columnHeader;
             while(columnCell != null && (columnCell = columnCell.getDown()) != null && columnCell != columnHeader) {
                 if(columnCell != null) {
@@ -236,7 +238,6 @@ public class CombinationGenerator {
             for (int num = 1; num <= MAX_NUM; num++) {
                 String nodeName = num + ":r" + row;
                 constraintNode = new ConstraintCell(solutionName);
-                //&& !givenSolutions.contains(solutionName)
                 if (currentRow == row && currentNum == num ) {
                     constraintNode.setConstraintSatisfied(1);
                     constraintNode.setType(NodeType.SatisfiedConstraint);
@@ -297,7 +298,6 @@ public class CombinationGenerator {
                 String nodeName = num + ":c" + col;
                 constraintNode = new ConstraintCell(solutionName);
 
-                //&& !givenSolutions.contains(solutionName)
                 if(currentCol == col && currentNum == num ) {
                     constraintNode.setConstraintSatisfied(1);
                     constraintNode.setType(NodeType.SatisfiedConstraint);
@@ -361,7 +361,6 @@ public class CombinationGenerator {
 
                 // do the current number, row and column satisfy the current
                 // square constraint (e.g. 1:s1)
-                //&& !givenSolutions.contains(solutionName)
                 if (currentNum == num && this.rowAndColInSquare(currentCol, currentRow, square)) {
                     constraintNode.setConstraintSatisfied(1);
                     constraintNode.setType(NodeType.SatisfiedConstraint);

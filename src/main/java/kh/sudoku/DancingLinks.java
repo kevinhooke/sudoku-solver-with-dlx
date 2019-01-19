@@ -1,7 +1,12 @@
 package kh.sudoku;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class DancingLinks {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+    
     /**
      * Counts the remaining, or unsatisfied constraints remaining in the matrix. If unsatisfied
      * constraints remain, the puzzle is not yet solved.
@@ -13,13 +18,11 @@ public class DancingLinks {
         int remainingUnsatisfiedConstraints = 0;
         ConstraintCell constraint = rootNode;
         ConstraintCell lastCell = null;
-        //System.out.println("first constraint: " + constraint.getName());
         //iterate through linked nodes until we end up back at the root node (it's a circularly linked list)
         while((constraint = constraint.getRight()) != rootNode) {
             lastCell = constraint;
             remainingUnsatisfiedConstraints++;
         }
-        //System.out.println("last constraint: " + lastCell.getName());
         return remainingUnsatisfiedConstraints;
     }
     
@@ -70,7 +73,7 @@ public class DancingLinks {
     
     //called in solve
     public void coverColumn(ConstraintCell startingCell) {
-        System.out.println("Covering column: " + startingCell.getName());
+        LOGGER.debug("Covering column: " + startingCell.getName());
         //unlink column header
         startingCell.getRight().setLeft(startingCell.getLeft());
         startingCell.getLeft().setRight(startingCell.getRight());
@@ -80,7 +83,7 @@ public class DancingLinks {
             //iterate and unlink the cells for this row
             ConstraintCell rowCell = null;
             for(rowCell = row.getRight(); rowCell != row; rowCell = rowCell.getRight()) {
-                //System.out.println("... unlinking: " + rowCell.toString());
+                LOGGER.debug("... unlinking: " + rowCell.toString());
                 rowCell.getUp().setDown(rowCell.getDown());
                 rowCell.getDown().setUp(rowCell.getUp());
             }
@@ -88,7 +91,7 @@ public class DancingLinks {
     }
 
     public void coverColumnForGivenSolution(ConstraintCell startingCell) {
-        System.out.println("Covering column: " + startingCell.getName());
+        LOGGER.debug("Covering column: " + startingCell.getName());
         //unlink column header
         startingCell.getRight().setLeft(startingCell.getLeft());
         startingCell.getLeft().setRight(startingCell.getRight());
@@ -98,7 +101,7 @@ public class DancingLinks {
             //iterate and unlink the cells for this row
             ConstraintCell rowCell = null;
             for(rowCell = row.getRight(); rowCell != row; rowCell = rowCell.getRight()) {
-                //System.out.println("... unlinking: " + rowCell.toString());
+                LOGGER.debug("... unlinking: " + rowCell.toString());
                 rowCell.getUp().setDown(rowCell.getDown());
                 rowCell.getDown().setUp(rowCell.getUp());
             }
@@ -116,14 +119,14 @@ public class DancingLinks {
             ConstraintCell rowCell = null;
             for(rowCell = row.getLeft(); rowCell != row; rowCell = rowCell.getLeft()) {
                 //relink
-                //System.out.println("... linking: " + rowCell.toString() + " " + rowCell.getName());  
+                LOGGER.debug("... linking: " + rowCell.toString() + " " + rowCell.getName());  
                 rowCell.getDown().setUp(rowCell);
                 rowCell.getUp().setDown(rowCell);
             }
         }
         
         //link column header
-        //System.out.println("linking: " + startingCell.getName());
+        LOGGER.debug("linking: " + startingCell.getName());
         startingCell.getRight().setLeft(startingCell);
         startingCell.getLeft().setRight(startingCell);
     }
@@ -148,19 +151,12 @@ public class DancingLinks {
      */
     public void coverCandidateRow(ConstraintCell rootNode, String candidateRowName) {
         
-        //TODO: missing the s constraint here, so only 3 columns being removed
-        
-        
         ConstraintCell firstRowNode = rootNode.getCandidateRowFirstNodes().get(candidateRowName);
-        System.out.println("Covering candidate row: " + firstRowNode.getName());
+        LOGGER.debug("Covering candidate row: " + firstRowNode.getName());
         ConstraintCell j = firstRowNode;
-        
-        System.out.println("... checking: " + j.hashCode());
-        System.out.println("... checking: " + j.getRight().hashCode());
-        System.out.println("... checking: " + j.getRight().getRight().hashCode());
-        System.out.println("... checking: " + j.getRight().getRight().getRight().hashCode());
+
         for(j = firstRowNode.getRight(); j != firstRowNode; j = j.getRight()) {
-            System.out.println("... covering for cell: " + j.hashCode());
+            LOGGER.debug("... covering for cell: " + j.hashCode());
             //Knuth DLX: cover column C[j]
             this.coverColumnForGivenSolution(this.getColumnHeaderForCell(j));
         }
@@ -190,13 +186,13 @@ public class DancingLinks {
     
     public ConstraintCell getColumnHeaderForCell(ConstraintCell c) {
         if(c.getType() == NodeType.ConstraintColumnHeader) {
-            System.out.println("... cell already is column header");
+            LOGGER.debug("... cell already is column header");
             return c;
         }
         ConstraintCell header = c;
         //iterate through linked nodes until we end up back at the column header node (it's a circularly linked list)
         while((header = header.getUp()).getType() != NodeType.ConstraintColumnHeader) {
-            System.out.println("...looking for header");
+            LOGGER.debug("...looking for header");
         }
         if(header.getType() !=  NodeType.ConstraintColumnHeader) {
             throw new ContraintColumnHeaderNotFoundException();

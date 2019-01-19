@@ -1,10 +1,12 @@
 package kh.sudoku;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class SudokuSolverWithDLX {
     
@@ -16,6 +18,8 @@ public class SudokuSolverWithDLX {
     private boolean endSearch = false;;
     
     private int solutions = 0;
+    
+    private static final Logger LOGGER = LogManager.getLogger();
     
     /**
      * LinkedList of the potentialCandiates identified so far
@@ -120,11 +124,11 @@ public class SudokuSolverWithDLX {
     }
     
     private void printSolutionList() {
-        
-        for(ConstraintCell c : this.potentialSolutionCandiates) {
-            System.out.println(c.getName());
+        if(LOGGER.isDebugEnabled()) {
+            for(ConstraintCell c : this.potentialSolutionCandiates) {
+                LOGGER.debug(c.getName());
+            }
         }
-        
     }
     
     /**
@@ -133,7 +137,7 @@ public class SudokuSolverWithDLX {
     public void removeGivenSolutionsFromSolutionMatrix(ConstraintCell rootNode, List<String> givenCells) {
 
         for(String givenCell : givenCells) {
-            System.out.println("Removing given solution: " + givenCell);
+            LOGGER.debug("Removing given solution: " + givenCell);
             this.dancingLinks.coverCandidateRow(this.rootNode, givenCell);
         }
     }
@@ -152,7 +156,7 @@ public class SudokuSolverWithDLX {
                 endSearch = true;
             }
             else {
-                System.out.println("columns remaining: " 
+                LOGGER.debug("columns remaining: " 
                         + this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode) 
                         + " (depth: " + this.recursiveDepthCount + ")");
                                 
@@ -162,10 +166,10 @@ public class SudokuSolverWithDLX {
                 // - deterministic approach: chose column with least number of 1s
                 ConstraintCell c = this.getNextColumn(this.rootNode);
                 if(c == null) {
-                    System.out.println("*** c is null!");
+                    LOGGER.error("*** c is null!");
                     return;
                 }
-                System.out.println("next column constraint: " + c.getName());
+                LOGGER.debug("next column constraint: " + c.getName());
                 
                 this.dancingLinks.coverColumn(c);
                 
@@ -187,7 +191,7 @@ public class SudokuSolverWithDLX {
                     //check if we've found a solution
                     if(this.potentialSolutionCandiates.size() == (CombinationGenerator.MAX_COLS * CombinationGenerator.MAX_ROWS) 
                             - this.givenSolutions.size()) {
-                        System.out.println("current solution rows: ");
+                        LOGGER.debug("current solution rows: ");
                         this.printSolutionList();
                         GridOutputWriter writer = new GridOutputWriter();
                         System.out.println("Starting puzzle:");
