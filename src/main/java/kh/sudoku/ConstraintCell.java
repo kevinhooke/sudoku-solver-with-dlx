@@ -5,16 +5,19 @@ import java.util.Map;
 
 public class ConstraintCell {
 
-
     private String name;
-    private int columnCount;
-    private int constraintSatisfied; // 0 = no, 1 = yes
     private ConstraintCell up;
     private ConstraintCell down;
     private ConstraintCell left;
     private ConstraintCell right;
     private NodeType type;
-    
+
+    /**
+     * During matrix initialization, only the cells satisfying a constraint are linked
+     * into the matrix (constraintSatisfied = 1), so this property is irrelevant.
+     */
+    private int constraintSatisfied; // 0 = no, 1 = yes
+
     /**
      * Map of the first node in each row, keyed by candidate solution name. This
      * is only populated for the root node, and allows a quick way to remove the given solution rows.
@@ -27,28 +30,15 @@ public class ConstraintCell {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public int incrementColumnCount() {
-        this.columnCount++;
-        return this.columnCount;
-    }
-    
-    public int getColumnCount() {
-        return columnCount;
-    }
-
-    public void setColumnCount(int columnCount) {
-        this.columnCount = columnCount;
-    }
-
     public ConstraintCell getUp() {
-        return up;
+        return this.up;
     }
 
     public void setUp(ConstraintCell up) {
@@ -56,7 +46,7 @@ public class ConstraintCell {
     }
 
     public ConstraintCell getDown() {
-        return down;
+        return this.down;
     }
 
     public void setDown(ConstraintCell down) {
@@ -64,7 +54,7 @@ public class ConstraintCell {
     }
 
     public ConstraintCell getLeft() {
-        return left;
+        return this.left;
     }
 
     public void setLeft(ConstraintCell left) {
@@ -72,7 +62,7 @@ public class ConstraintCell {
     }
 
     public ConstraintCell getRight() {
-        return right;
+        return this.right;
     }
 
     public void setRight(ConstraintCell right) {
@@ -80,7 +70,7 @@ public class ConstraintCell {
     }
 
     public int getConstraintSatisfied() {
-        return constraintSatisfied;
+        return this.constraintSatisfied;
     }
 
     public void setConstraintSatisfied(int constraintSatisfied) {
@@ -88,7 +78,7 @@ public class ConstraintCell {
     }
 
     public NodeType getType() {
-        return type;
+        return this.type;
     }
 
     public void setType(NodeType type) {
@@ -104,7 +94,7 @@ public class ConstraintCell {
         if(this.candidateRowFirstNodes == null){
             this.candidateRowFirstNodes = new HashMap<>();
         }
-        return candidateRowFirstNodes;
+        return this.candidateRowFirstNodes;
     }
 
     public void setCandidateRowFirstNodes(Map<String, ConstraintCell> candidateRowFirstNodes) {
