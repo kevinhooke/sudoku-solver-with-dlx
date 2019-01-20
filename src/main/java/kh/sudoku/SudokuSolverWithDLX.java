@@ -5,8 +5,8 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import kh.sudoku.io.GridInputReader;
 import kh.sudoku.io.GridOutputWriter;
@@ -24,7 +24,7 @@ public class SudokuSolverWithDLX {
     private long startTime = 0;
     private long endTime = 0;
     
-    private static final Logger LOGGER = LogManager.getLogger("SudokuSolverWithDLX");
+    private static final Logger LOGGER = LoggerFactory.getLogger(SudokuSolverWithDLX.class);
     
     /**
      * LinkedList of the potentialCandiates identified so far
@@ -130,7 +130,7 @@ public class SudokuSolverWithDLX {
 
         try {
             GridOutputWriter writer = new GridOutputWriter();
-            writer.writeGrid(this.givenSolutions, 9, 9);
+            //writer.writeGrid(this.givenSolutions, 9, 9);
             this.startTime = System.currentTimeMillis();
             this.solve();
             this.endTime = System.currentTimeMillis();

@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import kh.sudoku.io.GridOutputWriter;
+
 public class GridOutputWriterTest {
 
     private GridOutputWriter writer = new GridOutputWriter();

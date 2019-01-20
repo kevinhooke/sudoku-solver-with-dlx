@@ -1,11 +1,11 @@
 package kh.sudoku;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DancingLinks {
 
-    private static final Logger LOGGER = LogManager.getLogger("DancingLinks");
+    private static final Logger LOGGER = LoggerFactory.getLogger(DancingLinks.class);
     
     /**
      * Counts the remaining, or unsatisfied constraints remaining in the matrix. If unsatisfied

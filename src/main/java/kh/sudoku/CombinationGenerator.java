@@ -3,8 +3,8 @@ package kh.sudoku;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CombinationGenerator {
 
@@ -23,7 +23,7 @@ public class CombinationGenerator {
     private int solutionsAddedToMatrix = 0;
     private ConstraintCell rootNode = null;
     
-    private static final Logger LOGGER = LogManager.getLogger("CombinationGenerator");
+    private static final Logger LOGGER = LoggerFactory.getLogger(CombinationGenerator.class);
     
     public static void main(String[] args) {
         CombinationGenerator generator = new CombinationGenerator();
@@ -206,7 +206,7 @@ public class CombinationGenerator {
                     constraintNode.setConstraintSatisfied(0);
                 }
                 if(LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(constraintNode.getConstraintSatisfied());
+                    LOGGER.debug(Integer.toString(constraintNode.getConstraintSatisfied()));
                 }
             }
         }
@@ -269,7 +269,7 @@ public class CombinationGenerator {
                     constraintNode.setConstraintSatisfied(0);
                 }
                 if(LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(constraintNode.getConstraintSatisfied());
+                    LOGGER.debug(Integer.toString(constraintNode.getConstraintSatisfied()));
                 }
             }
         }
@@ -330,7 +330,7 @@ public class CombinationGenerator {
                     constraintNode.setConstraintSatisfied(0);
                 }
                 if(LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(constraintNode.getConstraintSatisfied());
+                    LOGGER.debug(Integer.toString(constraintNode.getConstraintSatisfied()));
                 }
             }
         }
@@ -401,7 +401,7 @@ public class CombinationGenerator {
                     constraintNode.setConstraintSatisfied(0);
                 }
                 if(LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(constraintNode.getConstraintSatisfied());
+                    LOGGER.debug(Integer.toString(constraintNode.getConstraintSatisfied()));
                 }
             }
         }
