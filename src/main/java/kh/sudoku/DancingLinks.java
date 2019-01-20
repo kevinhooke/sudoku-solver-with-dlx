@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 public class DancingLinks {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger("DancingLinks");
     
     /**
      * Counts the remaining, or unsatisfied constraints remaining in the matrix. If unsatisfied

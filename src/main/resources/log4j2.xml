@@ -2,13 +2,27 @@
 <Configuration>
   <Appenders>
     <Console name="STDOUT" target="SYSTEM_OUT">
-      <PatternLayout pattern="%C - %m%n"/>
+      <PatternLayout pattern="%m%n"/>
+    </Console>
+        <Console name="gridoutput" target="SYSTEM_OUT">
+      <PatternLayout pattern="%m"/>
     </Console>
   </Appenders>
   <Loggers>
-    <Logger name="kh.sudoku" level="info"/>
-    <Root level="debug">
-      <AppenderRef ref="STDOUT"/>
+    
+    <Logger name="kh.sudoku.SudokuSolverWithDLX" level="off">
+         <AppenderRef ref="STDOUT"/>
+    </Logger>
+    
+    <Logger name="kh.sudoku.DancingLinks" level="off">
+         <AppenderRef ref="STDOUT"/>
+    </Logger>
+    
+    <Logger name="kh.sudoku.CombinationGenerator" level="off">
+         <AppenderRef ref="gridoutput"/>
+    </Logger>
+    
+    <Root level="off">
     </Root>
   </Loggers>
 </Configuration>

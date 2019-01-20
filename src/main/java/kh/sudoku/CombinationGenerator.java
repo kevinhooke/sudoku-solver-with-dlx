@@ -23,7 +23,7 @@ public class CombinationGenerator {
     private int solutionsAddedToMatrix = 0;
     private ConstraintCell rootNode = null;
     
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger("CombinationGenerator");
     
     public static void main(String[] args) {
         CombinationGenerator generator = new CombinationGenerator();
@@ -71,14 +71,17 @@ public class CombinationGenerator {
             for (int col = 1; col <= MAX_COLS; col++) {
                 for (int num = 1; num <= MAX_NUM; num++) {
                     String solutionName = num + ":r" + row + ":c" + col;
-                    System.out.print(solutionName + " ");
-                    
+                    if(LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(solutionName + " ");
+                    }
                     previousLinkNodes = this.generateNumberInACellCombinations(solutionName, previousLinkNodes, givenSolutions, row, col, false);
                     previousLinkNodes = this.generateNumberInARowCombinations(solutionName, previousLinkNodes, givenSolutions, row, col, num, false);
                     previousLinkNodes = this.generateNumberInAColumnCombinations(solutionName, previousLinkNodes, givenSolutions, col, num, false);
                     previousLinkNodes = this.generateNumberInASquareCombinations(solutionName, previousLinkNodes, givenSolutions, row, col, num, false);
                     numberOfCombinations++;
-                    System.out.println();                    
+                    if(LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("\n");
+                    }
                     this.solutionsAddedToMatrix++;
                     //assign circular row links
                     previousLinkNodes.getFirstNodeInRow().setLeft(previousLinkNodes.getPreviousValidConstraintNode());
@@ -92,7 +95,7 @@ public class CombinationGenerator {
         //make circular link from last node in each column back to column header node
         this.linkLastNodeInEachColumnBackToColumnHeaderNode();
 
-        LOGGER.info("Combinations: " + numberOfCombinations);
+        LOGGER.info("\nCombinations: " + numberOfCombinations + "\n");
         
         return rootNode;
     }
@@ -110,7 +113,7 @@ public class CombinationGenerator {
         lastCell = null;
         columnCell = null;
         while((columnHeader = columnHeader.getRight()) != this.rootNode) {
-            LOGGER.debug("linkLastNodeInEachColumnBackToColumnHeaderNode : " + columnHeader.getName());
+            LOGGER.trace("linkLastNodeInEachColumnBackToColumnHeaderNode : " + columnHeader.getName() + "\ns");
             columnCell = columnHeader;
             while(columnCell != null && (columnCell = columnCell.getDown()) != null && columnCell != columnHeader) {
                 if(columnCell != null) {
@@ -146,7 +149,9 @@ public class CombinationGenerator {
                     //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
                     previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
                     
-                    System.out.print(constraintNode.getName() + " ");
+                    if(LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(constraintNode.getName() + " ");
+                    }
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);
@@ -200,7 +205,9 @@ public class CombinationGenerator {
                 } else {
                     constraintNode.setConstraintSatisfied(0);
                 }
-                System.out.print(constraintNode.getConstraintSatisfied());
+                if(LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(constraintNode.getConstraintSatisfied());
+                }
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);
@@ -223,7 +230,9 @@ public class CombinationGenerator {
                 //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
                 previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
                 
-                System.out.print(constraintNode.getName() + " ");
+                if(LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(constraintNode.getName() + " ");
+                }
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);
@@ -259,7 +268,9 @@ public class CombinationGenerator {
                 } else {
                     constraintNode.setConstraintSatisfied(0);
                 }
-                System.out.print(constraintNode.getConstraintSatisfied());
+                if(LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(constraintNode.getConstraintSatisfied());
+                }
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);
@@ -282,7 +293,9 @@ public class CombinationGenerator {
                 //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
                 previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
                 
-                System.out.print(constraintNode.getName() + " ");
+                if(LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(constraintNode.getName() + " ");
+                }
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);
@@ -316,7 +329,9 @@ public class CombinationGenerator {
                 else {
                     constraintNode.setConstraintSatisfied(0);
                 }
-                System.out.print(constraintNode.getConstraintSatisfied());
+                if(LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(constraintNode.getConstraintSatisfied());
+                }
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);
@@ -341,7 +356,9 @@ public class CombinationGenerator {
                 //add header node to map of last nodes in columns - used later for adding satisfied constraint links in each column
                 previousLinkNodes.setPreviousConstraintNodeInColumn(nodeName, constraintNode);
                 
-                System.out.print(constraintNode.getName() + " ");
+                if(LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(constraintNode.getName() + " ");
+                }
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);
@@ -383,7 +400,9 @@ public class CombinationGenerator {
                 } else {
                     constraintNode.setConstraintSatisfied(0);
                 }
-                System.out.print(constraintNode.getConstraintSatisfied());
+                if(LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(constraintNode.getConstraintSatisfied());
+                }
             }
         }
         previousLinkNodes.setLastConstraintNode(constraintNode);
