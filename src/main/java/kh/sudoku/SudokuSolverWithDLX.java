@@ -220,23 +220,7 @@ public class SudokuSolverWithDLX {
                     }
 
                     //check if we've found a solution
-                    if(this.potentialSolutionCandiates.size() == (CombinationGenerator.MAX_COLS * CombinationGenerator.MAX_ROWS) 
-                            - this.givenSolutions.size()) {
-                        this.endTime = System.currentTimeMillis();
-                        LOGGER.debug("current solution rows: ");
-                        this.printSolutionList();
-                        GridOutputWriter writer = new GridOutputWriter();
-                        System.out.println("Starting puzzle:");
-                        writer.writeGrid(givenSolutions, 9, 9);
-                        System.out.println("Solution:");
-                        writer.writeGrid(this.convertSolutionCandidateListToListString(), 9, 9);
-                        
-                        System.out.println("Elapsed ms: " + (endTime - startTime));
-                        this.solutions++;
-                        if(this.solutions == 1) {
-                            System.exit(0);
-                        }
-                    }
+                    this.checkForSolution();
                     
                     //Knuth DLX: search(k+1)
                     this.solve();
@@ -258,6 +242,26 @@ public class SudokuSolverWithDLX {
             }
         }
         recursiveDepthCount--;
+    }
+
+    private void checkForSolution() {
+        if(this.potentialSolutionCandiates.size() == (CombinationGenerator.MAX_COLS * CombinationGenerator.MAX_ROWS) 
+                - this.givenSolutions.size()) {
+            this.endTime = System.currentTimeMillis();
+            LOGGER.debug("current solution rows: ");
+            this.printSolutionList();
+            GridOutputWriter writer = new GridOutputWriter();
+            System.out.println("Starting puzzle:");
+            writer.writeGrid(givenSolutions, 9, 9);
+            System.out.println("Solution:");
+            writer.writeGrid(this.convertSolutionCandidateListToListString(), 9, 9);
+            
+            System.out.println("Elapsed ms: " + (endTime - startTime));
+            this.solutions++;
+            if(this.solutions == 1) {
+                System.exit(0);
+            }
+        }
     }
 
     /**
