@@ -34,103 +34,22 @@ public class SudokuSolverWithDLX {
     private List<String> givenSolutions = new ArrayList<>();
     
     public static void main(String[] args) {
-        new SudokuSolverWithDLX().run();
+        //moved sample call to SudokuSolverWithDLXSamplePuzzlesTest
     }
     
     public SudokuSolverWithDLX() {
     }
     
-    public void run() {
-        
-        List<String> givenSolutionsShorthand = new ArrayList<>();
-
-        // /*
-        // 1{ 0, 0, 0, 8, 1, 0, 6, 7, 0 },
-        givenSolutionsShorthand.add("...81.67."); 
-        
-        //2{ 0, 0, 7, 4, 9, 0, 2, 0, 8 },
-        givenSolutionsShorthand.add("..749.2.8");
-        
-        //3{ 0, 6, 0, 0, 5, 0, 1, 0, 4 }, 
-        givenSolutionsShorthand.add(".6..5.1.4");
-        
-        //4{ 1, 0, 0, 0, 0, 3, 9, 0, 0 }, 
-        givenSolutionsShorthand.add("1....39..");
-        
-        //5{ 4, 0, 0, 0, 8, 0, 0, 0, 7 },
-        givenSolutionsShorthand.add("4...8...7");
-        
-        //6{ 0, 0, 6, 9, 0, 0, 0, 0, 3 }, 
-        givenSolutionsShorthand.add("..69....3");
-        
-        //7{ 9, 0, 2, 0, 3, 0, 0, 6, 0 }, 
-        givenSolutionsShorthand.add("9.2.3..6.");
-        
-        //8{ 6, 0, 1, 0, 7, 4, 3, 0, 0 },
-        givenSolutionsShorthand.add("6.1.743..");
-        
-        //9{ 0, 3, 4, 0, 6, 9, 0, 0, 0 }
-        givenSolutionsShorthand.add(".34.69...");
+    public void run(List<String> givenSolutionsShorthand) {
         
         GridInputReader reader = new GridInputReader();
-        this.givenSolutions = reader.readGivenSolutions(givenSolutionsShorthand);
-        
-        //first approach, replaced by reading the shorthand input
-//        givenSolutions.add("8:r1:c4");
-//        givenSolutions.add("1:r1:c5");
-//        givenSolutions.add("6:r1:c7");
-//        givenSolutions.add("7:r1:c8");
-//        givenSolutions.add("7:r2:c3");
-//        givenSolutions.add("4:r2:c4");
-//        givenSolutions.add("9:r2:c5");
-//        givenSolutions.add("2:r2:c7");
-//        givenSolutions.add("8:r2:c9");
-//        givenSolutions.add("6:r3:c2");
-//        givenSolutions.add("5:r3:c5");
-//        givenSolutions.add("1:r3:c7");
-//        givenSolutions.add("4:r3:c9");
-//        givenSolutions.add("1:r4:c1");
-//        givenSolutions.add("3:r4:c6");
-//        givenSolutions.add("9:r4:c7");
-//        givenSolutions.add("4:r5:c1");
-//        givenSolutions.add("8:r5:c5");
-//        givenSolutions.add("7:r5:c9");
-//        givenSolutions.add("6:r6:c3");
-//        givenSolutions.add("9:r6:c4");
-//        givenSolutions.add("3:r6:c9");
-//        givenSolutions.add("9:r7:c1");
-//        givenSolutions.add("2:r7:c3");
-//        givenSolutions.add("3:r7:c5");
-//        givenSolutions.add("6:r7:c8");
-//        givenSolutions.add("6:r8:c1");
-//        givenSolutions.add("1:r8:c3");
-//        givenSolutions.add("7:r8:c5");
-//        givenSolutions.add("4:r8:c6");
-//        givenSolutions.add("3:r8:c7");
-//        givenSolutions.add("3:r9:c2");
-//        givenSolutions.add("4:r9:c3");
-//        givenSolutions.add("6:r9:c5");
-//        givenSolutions.add("9:r9:c6");
-
-        //3x3 grid
-        //givenSolutions.add("9:r1:c1");
-        //givenSolutions.add("5:r1:c1");
-        //givenSolutions.add("2:r1:c1");
-        //givenSolutions.add("2:r1:c2");
-        //givenSolutions.add("3:r1:c3");
-        
-        //System.out.println("Starting puzzle:");
-        //writer.writeGrid(givenSolutions, 9, 9);
-        //writer.writeGrid(givenSolutions, 3, 3);
-        
+        this.givenSolutions = reader.readGivenSolutions(givenSolutionsShorthand);        
         
         //initialize with givens
-        this.initiateCandidateMatrix(givenSolutions);
-        
+        this.initiateCandidateMatrix(givenSolutions);        
 
         try {
             GridOutputWriter writer = new GridOutputWriter();
-            //writer.writeGrid(this.givenSolutions, 9, 9);
             this.startTime = System.currentTimeMillis();
             this.solve();
             this.endTime = System.currentTimeMillis();
@@ -175,7 +94,6 @@ public class SudokuSolverWithDLX {
     
     public void solve() {
         recursiveDepthCount++;
-        
         if(!endSearch) {
             //Knuth DLX: if R[h] = h print solution and return
             //interpretation 1: if node on right of root node is the root node, there are no columns left
@@ -244,7 +162,7 @@ public class SudokuSolverWithDLX {
         recursiveDepthCount--;
     }
 
-    private void checkForSolution() {
+    public void checkForSolution() {
         if(this.potentialSolutionCandiates.size() == (CombinationGenerator.MAX_COLS * CombinationGenerator.MAX_ROWS) 
                 - this.givenSolutions.size()) {
             this.endTime = System.currentTimeMillis();
@@ -256,6 +174,7 @@ public class SudokuSolverWithDLX {
             System.out.println("Solution:");
             writer.writeGrid(this.convertSolutionCandidateListToListString(), 9, 9);
             
+            System.out.println("recursive depth count: " + this.recursiveDepthCount);
             System.out.println("Elapsed ms: " + (endTime - startTime));
             this.solutions++;
             if(this.solutions == 1) {
