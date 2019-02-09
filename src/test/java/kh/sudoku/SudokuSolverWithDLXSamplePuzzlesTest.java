@@ -1,7 +1,8 @@
 package kh.sudoku;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -14,6 +15,21 @@ import org.junit.Test;
  */
 public class SudokuSolverWithDLXSamplePuzzlesTest {
 
+    private String easySolution = 
+            "+-------+-------+-------+\n" + 
+            "| 3 4 9 | 8 1 2 | 6 7 5 | \n" + 
+            "| 5 1 7 | 4 9 6 | 2 3 8 | \n" + 
+            "| 2 6 8 | 3 5 7 | 1 9 4 | \n" + 
+            "+-------+-------+-------+\n" + 
+            "| 1 8 5 | 7 2 3 | 9 4 6 | \n" + 
+            "| 4 9 3 | 6 8 1 | 5 2 7 | \n" + 
+            "| 7 2 6 | 9 4 5 | 8 1 3 | \n" + 
+            "+-------+-------+-------+\n" + 
+            "| 9 7 2 | 5 3 8 | 4 6 1 | \n" + 
+            "| 6 5 1 | 2 7 4 | 3 8 9 | \n" + 
+            "| 8 3 4 | 1 6 9 | 7 5 2 | \n" + 
+            "+-------+-------+-------+\n";
+    
     private SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
 
     
@@ -29,7 +45,8 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add("9.2.3..6.");
         givenSolutionsShorthand.add("6.1.743..");
         givenSolutionsShorthand.add(".34.69...");
-        this.solver.run(givenSolutionsShorthand);
+        String result = this.solver.run(givenSolutionsShorthand);
+        assertEquals(easySolution, result);
     }
 
     @Test
@@ -69,11 +86,26 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add(".1...7..3");
         givenSolutionsShorthand.add("2.....89.");
         givenSolutionsShorthand.add("...2..1.8");
-        givenSolutionsShorthand.add("...419...");
+        givenSolutionsShorthand.add("...4.9...");
         givenSolutionsShorthand.add("1.6..8...");
         givenSolutionsShorthand.add(".39.....7");
         givenSolutionsShorthand.add("8..5...4.");
         givenSolutionsShorthand.add("....2.3..");
+        this.solver.run(givenSolutionsShorthand);
+    }
+    
+    @Test
+    public void testOneGiven() {
+        List<String> givenSolutionsShorthand = new ArrayList<>();
+        givenSolutionsShorthand.add("..5......");
+        givenSolutionsShorthand.add(".........");
+        givenSolutionsShorthand.add(".........");
+        givenSolutionsShorthand.add(".........");
+        givenSolutionsShorthand.add(".........");
+        givenSolutionsShorthand.add(".........");
+        givenSolutionsShorthand.add(".........");
+        givenSolutionsShorthand.add(".........");
+        givenSolutionsShorthand.add(".........");
         this.solver.run(givenSolutionsShorthand);
     }
 

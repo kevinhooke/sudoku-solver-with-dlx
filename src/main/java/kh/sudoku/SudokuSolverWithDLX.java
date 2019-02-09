@@ -18,11 +18,14 @@ public class SudokuSolverWithDLX {
     private DancingLinks dancingLinks = new DancingLinks();
     
     private int recursiveDepthCount;
+    private int valuesTriedCount;
     private boolean endSearch = false;;
     
     private int solutions = 0;
     private long startTime = 0;
     private long endTime = 0;
+    
+    private String solution = null;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SudokuSolverWithDLX.class);
     
@@ -40,7 +43,7 @@ public class SudokuSolverWithDLX {
     public SudokuSolverWithDLX() {
     }
     
-    public void run(List<String> givenSolutionsShorthand) {
+    public String run(List<String> givenSolutionsShorthand) {
         
         GridInputReader reader = new GridInputReader();
         this.givenSolutions = reader.readGivenSolutions(givenSolutionsShorthand);        
@@ -56,11 +59,11 @@ public class SudokuSolverWithDLX {
             System.out.println("... search ended, nodes in solution list: " + this.potentialSolutionCandiates.size());
             this.printSolutionList();
             
-            writer.writeGrid(this.convertSolutionCandidateListToListString(), 3, 3);
         }
         catch(Error e) {
             System.out.println("candidate solution rows so far: " + this.potentialSolutionCandiates.size());
         }
+        return this.solution;
     }
     
     private List<String> convertSolutionCandidateListToListString(){
@@ -102,7 +105,9 @@ public class SudokuSolverWithDLX {
                     this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode) == 0) {
                 System.out.println("end: solution found");
                 this.printSolutionList();
-                endSearch = true;
+                
+                //TODO: continue searching for additional solutions
+                //endSearch = true;
             }
             else {
                 LOGGER.debug("columns remaining: " 
@@ -128,6 +133,7 @@ public class SudokuSolverWithDLX {
                     //Knuth DLX: set Ok <- r
                     //interpretation: add current row to solution
                     potentialSolutionCandiates.add(r);
+                    valuesTriedCount++;
                     
                     //Knuth DLX: for each j <- R[r], R[R[r]], ..., while j != r
                     //interpretation: for each cell to the right in the current row
@@ -172,12 +178,13 @@ public class SudokuSolverWithDLX {
             System.out.println("Starting puzzle:");
             writer.writeGrid(givenSolutions, 9, 9);
             System.out.println("Solution:");
-            writer.writeGrid(this.convertSolutionCandidateListToListString(), 9, 9);
+            this.solution = writer.writeGrid(this.convertSolutionCandidateListToListString(), 9, 9);
             
             System.out.println("recursive depth count: " + this.recursiveDepthCount);
+            System.out.println("potential candidates tried count: " + this.valuesTriedCount);
             System.out.println("Elapsed ms: " + (endTime - startTime));
             this.solutions++;
-            if(this.solutions == 1) {
+            if(this.solutions == 2) {
                 System.exit(0);
             }
         }
