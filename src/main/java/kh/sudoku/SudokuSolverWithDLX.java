@@ -16,6 +16,7 @@ public class SudokuSolverWithDLX {
     private ConstraintCell rootNode;
     private CombinationGenerator generator = new CombinationGenerator();
     private DancingLinks dancingLinks = new DancingLinks();
+    private GridOutputWriter writer = new GridOutputWriter();
     
     private int recursiveDepthCount;
     private int valuesTriedCount;
@@ -26,6 +27,8 @@ public class SudokuSolverWithDLX {
     private long endTime = 0;
     
     private String solution = null;
+    private List<String> currentSolution = new ArrayList<>();
+    private PuzzleResults results = new PuzzleResults();
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SudokuSolverWithDLX.class);
     
@@ -36,14 +39,28 @@ public class SudokuSolverWithDLX {
     
     private List<String> givenSolutions = new ArrayList<>();
     
-    public static void main(String[] args) {
-        //moved sample call to SudokuSolverWithDLXSamplePuzzlesTest
-    }
-    
     public SudokuSolverWithDLX() {
     }
     
-    public String run(List<String> givenSolutionsShorthand) {
+    /**
+     * Run solver and return results as formatted grid output for display.
+     * 
+     * @param givenSolutionsShorthand
+     * @return
+     */
+    public String runWithFormattedOutput(List<String> givenSolutionsShorthand) {
+        this.run(givenSolutionsShorthand);
+        return this.solution;
+    }
+    
+    /**
+     * Run solver and return first result as list of Strings in shorthand format,
+     * e.g. List of Strings representing each row "123456789"
+     * 
+     * @param givenSolutionsShorthand
+     * @return
+     */
+    public PuzzleResults run(List<String> givenSolutionsShorthand) {
         
         GridInputReader reader = new GridInputReader();
         this.givenSolutions = reader.readGivenSolutions(givenSolutionsShorthand);        
@@ -63,7 +80,10 @@ public class SudokuSolverWithDLX {
         catch(Error e) {
             System.out.println("candidate solution rows so far: " + this.potentialSolutionCandiates.size());
         }
-        return this.solution;
+        if(this.results.getResults().size() == 1) {
+            this.results.setValidPuzzle(true);
+        }
+        return this.results;
     }
     
     private List<String> convertSolutionCandidateListToListString(){
@@ -171,22 +191,30 @@ public class SudokuSolverWithDLX {
     public void checkForSolution() {
         if(this.potentialSolutionCandiates.size() == (CombinationGenerator.MAX_COLS * CombinationGenerator.MAX_ROWS) 
                 - this.givenSolutions.size()) {
+            
+            this.solutions++;
+            
             this.endTime = System.currentTimeMillis();
             LOGGER.debug("current solution rows: ");
             this.printSolutionList();
-            GridOutputWriter writer = new GridOutputWriter();
             System.out.println("Starting puzzle:");
-            writer.writeGrid(givenSolutions, 9, 9);
+            this.writer.writeGrid(givenSolutions, 9, 9);
             System.out.println("Solution:");
-            this.solution = writer.writeGrid(this.convertSolutionCandidateListToListString(), 9, 9);
+            this.solution = this.writer.writeGrid(this.convertSolutionCandidateListToListString(), 9, 9);
+            this.currentSolution = this.writer.writeShorthand(this.convertSolutionCandidateListToListString(), 9, 9);
+            this.results.addResult(this.currentSolution);
+            
+            //result current solution for next
+            this.currentSolution = new ArrayList<>();
             
             System.out.println("recursive depth count: " + this.recursiveDepthCount);
             System.out.println("potential candidates tried count: " + this.valuesTriedCount);
+            System.out.println("solutions found: " + this.solutions);
             System.out.println("Elapsed ms: " + (endTime - startTime));
-            this.solutions++;
-            if(this.solutions == 2) {
-                System.exit(0);
-            }
+//          //TODO: pass maximum solutions, if met, set exit flag, don't system exit
+//            if(this.solutions == 2) {
+//                System.exit(0);
+//            }
         }
     }
 

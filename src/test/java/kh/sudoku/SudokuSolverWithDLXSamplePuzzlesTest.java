@@ -1,10 +1,13 @@
 package kh.sudoku;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -30,11 +33,24 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
             "| 8 3 4 | 1 6 9 | 7 5 2 | \n" + 
             "+-------+-------+-------+\n";
     
-    private SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
-
+    private static final List<String> easySolutionShorthand = new ArrayList<>();
+    
+    @BeforeClass
+    public static void init(){
+        easySolutionShorthand.add("349812675");
+        easySolutionShorthand.add("517496238");
+        easySolutionShorthand.add("268357194");
+        easySolutionShorthand.add("185723946");
+        easySolutionShorthand.add("493681527");
+        easySolutionShorthand.add("726945813");
+        easySolutionShorthand.add("972538461");
+        easySolutionShorthand.add("651274389");
+        easySolutionShorthand.add("834169752");
+    }
     
     @Test
     public void testEasy() {
+        SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
         List<String> givenSolutionsShorthand = new ArrayList<>();
         givenSolutionsShorthand.add("...81.67."); 
         givenSolutionsShorthand.add("..749.2.8");
@@ -45,12 +61,32 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add("9.2.3..6.");
         givenSolutionsShorthand.add("6.1.743..");
         givenSolutionsShorthand.add(".34.69...");
-        String result = this.solver.run(givenSolutionsShorthand);
+        String result = solver.runWithFormattedOutput(givenSolutionsShorthand);
         assertEquals(easySolution, result);
     }
 
     @Test
+    public void testEasy_returnShorthand() {
+        SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
+        List<String> givenSolutionsShorthand = new ArrayList<>();
+        givenSolutionsShorthand.add("...81.67."); 
+        givenSolutionsShorthand.add("..749.2.8");
+        givenSolutionsShorthand.add(".6..5.1.4");
+        givenSolutionsShorthand.add("1....39..");
+        givenSolutionsShorthand.add("4...8...7");
+        givenSolutionsShorthand.add("..69....3");
+        givenSolutionsShorthand.add("9.2.3..6.");
+        givenSolutionsShorthand.add("6.1.743..");
+        givenSolutionsShorthand.add(".34.69...");
+        PuzzleResults results = solver.run(givenSolutionsShorthand);
+        assertTrue(results.isValidPuzzle());
+        assertEquals(1, results.getResults().size());
+        assertEquals(easySolutionShorthand, results.getResults().get(0));
+    }
+    
+    @Test
     public void testMedium() {
+        SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
         List<String> givenSolutionsShorthand = new ArrayList<>();
         givenSolutionsShorthand.add("5689.....");
         givenSolutionsShorthand.add("......4..");
@@ -61,11 +97,12 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add("..472.93.");
         givenSolutionsShorthand.add("..6......");
         givenSolutionsShorthand.add(".....8145");
-        this.solver.run(givenSolutionsShorthand);
+        String result = solver.runWithFormattedOutput(givenSolutionsShorthand);
     }
 
     @Test
     public void testHard() {
+        SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
         List<String> givenSolutionsShorthand = new ArrayList<>();
         givenSolutionsShorthand.add(".9...1.78");
         givenSolutionsShorthand.add(".3......9");
@@ -76,11 +113,28 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add("..5..6.2.");
         givenSolutionsShorthand.add("2......4.");
         givenSolutionsShorthand.add("81.7....3.");
-        this.solver.run(givenSolutionsShorthand);
+        String result = solver.runWithFormattedOutput(givenSolutionsShorthand);
     }
 
     @Test
+    public void testHard_modified1Removed() {
+        SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
+        List<String> givenSolutionsShorthand = new ArrayList<>();
+        givenSolutionsShorthand.add(".....1.78");
+        givenSolutionsShorthand.add(".3......9");
+        givenSolutionsShorthand.add(".5.6..4..");
+        givenSolutionsShorthand.add("...2.7...");
+        givenSolutionsShorthand.add(".83...79.");
+        givenSolutionsShorthand.add("...5.8...");
+        givenSolutionsShorthand.add("..5..6.2.");
+        givenSolutionsShorthand.add("2......4.");
+        givenSolutionsShorthand.add("81.7....3.");
+        String result = solver.runWithFormattedOutput(givenSolutionsShorthand);
+    }
+    
+    @Test
     public void testEvil() {
+        SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
         List<String> givenSolutionsShorthand = new ArrayList<>();
         givenSolutionsShorthand.add("..5.9....");
         givenSolutionsShorthand.add(".1...7..3");
@@ -91,11 +145,13 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add(".39.....7");
         givenSolutionsShorthand.add("8..5...4.");
         givenSolutionsShorthand.add("....2.3..");
-        this.solver.run(givenSolutionsShorthand);
+        String result = solver.runWithFormattedOutput(givenSolutionsShorthand);
     }
     
     @Test
+    @Ignore
     public void testOneGiven() {
+        SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
         List<String> givenSolutionsShorthand = new ArrayList<>();
         givenSolutionsShorthand.add("..5......");
         givenSolutionsShorthand.add(".........");
@@ -106,7 +162,7 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add(".........");
         givenSolutionsShorthand.add(".........");
         givenSolutionsShorthand.add(".........");
-        this.solver.run(givenSolutionsShorthand);
+        String result = solver.runWithFormattedOutput(givenSolutionsShorthand);
     }
 
 }
