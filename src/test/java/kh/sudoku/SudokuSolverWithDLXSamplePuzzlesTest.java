@@ -79,7 +79,7 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add("9.2.3..6.");
         givenSolutionsShorthand.add("6.1.743..");
         givenSolutionsShorthand.add(".34.69...");
-        PuzzleResults results = solver.run(givenSolutionsShorthand, 1);
+        PuzzleResults results = solver.run(givenSolutionsShorthand, 10);
         assertTrue(results.isValidPuzzle());
         assertEquals(1, results.getResults().size());
         assertEquals(easySolutionShorthand, results.getResults().get(0));
@@ -98,7 +98,7 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add("..472.93.");
         givenSolutionsShorthand.add("..6......");
         givenSolutionsShorthand.add(".....8145");
-        PuzzleResults results = solver.run(givenSolutionsShorthand, 1);
+        PuzzleResults results = solver.run(givenSolutionsShorthand, 10);
         assertTrue(results.isValidPuzzle());
         assertEquals(1, results.getResults().size());
         
@@ -118,7 +118,7 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add("..5..6.2.");
         givenSolutionsShorthand.add("2......4.");
         givenSolutionsShorthand.add("81.7....3.");
-        PuzzleResults results = solver.run(givenSolutionsShorthand, 1);
+        PuzzleResults results = solver.run(givenSolutionsShorthand, 10);
         assertTrue(results.isValidPuzzle());
         assertEquals(1, results.getResults().size());
         
@@ -157,11 +157,32 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add(".39.....7");
         givenSolutionsShorthand.add("8..5...4.");
         givenSolutionsShorthand.add("....2.3..");
-        PuzzleResults results = solver.run(givenSolutionsShorthand, 1);
+        PuzzleResults results = solver.run(givenSolutionsShorthand, 10);
         assertTrue(results.isValidPuzzle());
         assertEquals(1, results.getResults().size());
         
         //TODO: need assert against expected result
+    }
+    
+    /**
+     * Puzzle from: https://www.free-sudoku.com/sudoku.php?dchoix=evil
+     */
+    @Test
+    public void test17Givens_1() {
+        SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
+        List<String> givenSolutionsShorthand = new ArrayList<>();
+        givenSolutionsShorthand.add(".4.3.....");
+        givenSolutionsShorthand.add("......79.");
+        givenSolutionsShorthand.add("...6.....");
+        givenSolutionsShorthand.add("...14.5..");
+        givenSolutionsShorthand.add("9......1.");
+        givenSolutionsShorthand.add("2.......6");
+        givenSolutionsShorthand.add("....92...");
+        givenSolutionsShorthand.add(".5....8..");
+        givenSolutionsShorthand.add("....7....");
+        PuzzleResults results = solver.run(givenSolutionsShorthand, 10);
+        assertTrue(results.isValidPuzzle());
+        assertEquals(1, results.getResults().size());
     }
     
     @Test

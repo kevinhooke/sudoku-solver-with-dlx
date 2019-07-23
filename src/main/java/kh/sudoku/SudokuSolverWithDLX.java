@@ -127,9 +127,6 @@ public class SudokuSolverWithDLX {
                     this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode) == 0) {
                 System.out.println("end: solution found");
                 this.printSolutionList();
-                
-                //TODO: continue searching for additional solutions
-                //endSearch = true;
             }
             else {
                 LOGGER.debug("columns remaining: " 
@@ -142,6 +139,7 @@ public class SudokuSolverWithDLX {
                 // - deterministic approach: chose column with least number of 1s
                 ConstraintCell c = this.getNextColumn(this.rootNode);
                 if(c == null) {
+                    //this should never happen if the implementation is working correctly
                     LOGGER.error("*** c is null!");
                     return;
                 }
@@ -213,7 +211,7 @@ public class SudokuSolverWithDLX {
             System.out.println("potential candidates tried count: " + this.valuesTriedCount);
             System.out.println("solutions found: " + this.solutions);
             System.out.println("Elapsed ms: " + (endTime - startTime));
-            //TODO: pass maximum solutions, if met, set exit flag, don't system exit
+            //if we've already found the specified maximum solutions set exit flag
             if(this.solutions == this.maximumSolutions) {
                 this.endSearch = true;
             }
