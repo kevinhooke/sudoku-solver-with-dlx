@@ -1,4 +1,4 @@
-#Java Sudoku Solver
+# Java Sudoku Solver
 
 This is an implementation of Donald Knuth's Algorithm X to solve Sudoku puzzles
 using Dancing Links.
@@ -7,6 +7,9 @@ This started as an investigation into whether you could solve a problem
 (e.g. a Sudoku Puzzle Solver) without fully understanding the problem (in this
 case without knowledge that Sudoku puzzle's being an example of a mathematical
 problem that can be solved as a type of problem called 'exact cover').
+
+TL;DR; No. You might get close, you might end up with something that partially works,
+but in most cases, no.
 
 I wrote a number of articles about my experience implementing a Sudoku Solver, which you can
 read here:
