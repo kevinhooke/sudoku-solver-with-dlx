@@ -1,6 +1,7 @@
 package kh.sudoku;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add("9.2.3..6.");
         givenSolutionsShorthand.add("6.1.743..");
         givenSolutionsShorthand.add(".34.69...");
-        String result = solver.runWithFormattedOutput(givenSolutionsShorthand);
+        String result = solver.runWithFormattedOutput(givenSolutionsShorthand, 1);
         assertEquals(easySolution, result);
     }
 
@@ -78,7 +79,7 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add("9.2.3..6.");
         givenSolutionsShorthand.add("6.1.743..");
         givenSolutionsShorthand.add(".34.69...");
-        PuzzleResults results = solver.run(givenSolutionsShorthand);
+        PuzzleResults results = solver.run(givenSolutionsShorthand, 1);
         assertTrue(results.isValidPuzzle());
         assertEquals(1, results.getResults().size());
         assertEquals(easySolutionShorthand, results.getResults().get(0));
@@ -97,7 +98,11 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add("..472.93.");
         givenSolutionsShorthand.add("..6......");
         givenSolutionsShorthand.add(".....8145");
-        String result = solver.runWithFormattedOutput(givenSolutionsShorthand);
+        PuzzleResults results = solver.run(givenSolutionsShorthand, 1);
+        assertTrue(results.isValidPuzzle());
+        assertEquals(1, results.getResults().size());
+        
+        //TODO: need assert against expected result
     }
 
     @Test
@@ -113,11 +118,15 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add("..5..6.2.");
         givenSolutionsShorthand.add("2......4.");
         givenSolutionsShorthand.add("81.7....3.");
-        String result = solver.runWithFormattedOutput(givenSolutionsShorthand);
+        PuzzleResults results = solver.run(givenSolutionsShorthand, 1);
+        assertTrue(results.isValidPuzzle());
+        assertEquals(1, results.getResults().size());
+        
+        //TODO: need assert against expected result
     }
 
     @Test
-    public void testHard_modified1Removed() {
+    public void testHard_modified1GivenRemoved() {
         SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
         List<String> givenSolutionsShorthand = new ArrayList<>();
         givenSolutionsShorthand.add(".....1.78");
@@ -129,7 +138,10 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add("..5..6.2.");
         givenSolutionsShorthand.add("2......4.");
         givenSolutionsShorthand.add("81.7....3.");
-        String result = solver.runWithFormattedOutput(givenSolutionsShorthand);
+        PuzzleResults results = solver.run(givenSolutionsShorthand, 10);
+        assertFalse(results.isValidPuzzle());
+        assertEquals(4, results.getResults().size());
+
     }
     
     @Test
@@ -145,11 +157,14 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add(".39.....7");
         givenSolutionsShorthand.add("8..5...4.");
         givenSolutionsShorthand.add("....2.3..");
-        String result = solver.runWithFormattedOutput(givenSolutionsShorthand);
+        PuzzleResults results = solver.run(givenSolutionsShorthand, 1);
+        assertTrue(results.isValidPuzzle());
+        assertEquals(1, results.getResults().size());
+        
+        //TODO: need assert against expected result
     }
     
     @Test
-    @Ignore
     public void testOneGiven() {
         SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
         List<String> givenSolutionsShorthand = new ArrayList<>();
@@ -162,7 +177,9 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         givenSolutionsShorthand.add(".........");
         givenSolutionsShorthand.add(".........");
         givenSolutionsShorthand.add(".........");
-        String result = solver.runWithFormattedOutput(givenSolutionsShorthand);
+        PuzzleResults results = solver.run(givenSolutionsShorthand, 10);
+        assertFalse(results.isValidPuzzle());
+        assertEquals(10, results.getResults().size());
     }
 
 }

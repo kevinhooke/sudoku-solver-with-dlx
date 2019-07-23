@@ -18,6 +18,8 @@ public class SudokuSolverWithDLX {
     private DancingLinks dancingLinks = new DancingLinks();
     private GridOutputWriter writer = new GridOutputWriter();
     
+    private int maximumSolutions;
+    
     private int recursiveDepthCount;
     private int valuesTriedCount;
     private boolean endSearch = false;;
@@ -48,8 +50,8 @@ public class SudokuSolverWithDLX {
      * @param givenSolutionsShorthand
      * @return
      */
-    public String runWithFormattedOutput(List<String> givenSolutionsShorthand) {
-        this.run(givenSolutionsShorthand);
+    public String runWithFormattedOutput(List<String> givenSolutionsShorthand, int maxSolutions) {
+        this.run(givenSolutionsShorthand, maxSolutions);
         return this.solution;
     }
     
@@ -60,8 +62,8 @@ public class SudokuSolverWithDLX {
      * @param givenSolutionsShorthand
      * @return
      */
-    public PuzzleResults run(List<String> givenSolutionsShorthand) {
-        
+    public PuzzleResults run(List<String> givenSolutionsShorthand, int maxSolutions) {
+        this.maximumSolutions = maxSolutions;
         GridInputReader reader = new GridInputReader();
         this.givenSolutions = reader.readGivenSolutions(givenSolutionsShorthand);        
         
@@ -211,10 +213,10 @@ public class SudokuSolverWithDLX {
             System.out.println("potential candidates tried count: " + this.valuesTriedCount);
             System.out.println("solutions found: " + this.solutions);
             System.out.println("Elapsed ms: " + (endTime - startTime));
-//          //TODO: pass maximum solutions, if met, set exit flag, don't system exit
-//            if(this.solutions == 2) {
-//                System.exit(0);
-//            }
+            //TODO: pass maximum solutions, if met, set exit flag, don't system exit
+            if(this.solutions == this.maximumSolutions) {
+                this.endSearch = true;
+            }
         }
     }
 
