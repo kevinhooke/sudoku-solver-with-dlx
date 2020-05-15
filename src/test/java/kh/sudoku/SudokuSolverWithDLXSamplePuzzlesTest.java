@@ -412,6 +412,8 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
      * Puzzle generated from https://www.websudoku.com
      * 
      * Difficulty: medium
+     * 
+     * given: 31 (removed 50)
      * Depth: 50
      * Candidates tried: 50
      * Time: 3ms
@@ -496,6 +498,7 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
      * 
      * Difficulty: evil
      * 
+     * givens: 24 (removed 57)
      * recursive depth count: 57
      * potential candidates tried count: 57
      * solutions found: 1
@@ -531,7 +534,7 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
      * potential candidates tried count: 64
      * solutions found: 1
      * Elapsed ms: 5ms (2008 Mac Pro 2x 2.8GHz Xeon)
-     * Elapsed ms: 4ms (2015 MBP)
+     * Elapsed ms: 4ms (2015 MBP i7)
      */
     @Test
     public void test17Givens_1() {
@@ -556,6 +559,8 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
      * From: http://www.sudokuwiki.org/Weekly_Sudoku.asp?puz=28
      * 
      * Difficult: unsolvable 
+     * 
+     * givens: 23 (removed 58)
      * Depth: 59
      * Candidates tried: 29671
      * Time: 159ms
@@ -583,6 +588,7 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
      * From: http://www.sudokuwiki.org/Weekly_Sudoku.asp?puz=49
      * 
      * Difficulty: unsolvable
+     * givens: 22 (removed 59)
      * Depth: 59
      * Candidates tried: 23407
      * Time: 165ms
