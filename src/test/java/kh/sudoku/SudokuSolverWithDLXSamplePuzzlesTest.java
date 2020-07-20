@@ -389,6 +389,26 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         assertEquals(easySolution, result);
     }
 
+    /**
+     * From The Guardian, Easy 07/13/20 
+     * https://www.theguardian.com/lifeandstyle/2020/jul/13/sudoku-4883-easy
+     */
+    @Test
+    public void testEasy2() {
+        SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
+        List<String> givenSolutionsShorthand = new ArrayList<>();
+        givenSolutionsShorthand.add("..1.2...4");
+        givenSolutionsShorthand.add(".6.......");
+        givenSolutionsShorthand.add("84.1..3..");
+        givenSolutionsShorthand.add("....3..9.");
+        givenSolutionsShorthand.add(".859.726.");
+        givenSolutionsShorthand.add(".1..8....");
+        givenSolutionsShorthand.add("..8..4.51");
+        givenSolutionsShorthand.add(".......4.");
+        givenSolutionsShorthand.add("2...7.6.."); 
+        String result = solver.runWithFormattedOutput(givenSolutionsShorthand, 1);
+        //assertEquals(easySolution, result);
+}
     @Test
     public void testEasy_returnShorthand() {
         SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
@@ -635,4 +655,25 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         assertEquals(10, results.getResults().size());
     }
 
+    /**
+     * From: https://www.reddit.com/r/sudoku/comments/gwn854/most_impactful_sovling_techniques_to_implement_in/
+     */
+    @Test
+    public void testHardFromRedditSudoku1() {
+        SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
+        List<String> givenSolutionsShorthand = new ArrayList<>();
+        givenSolutionsShorthand.add("..3..5..9");
+        givenSolutionsShorthand.add("9..2...6.");
+        givenSolutionsShorthand.add(".8..4.7..");
+        givenSolutionsShorthand.add("..7.....2");
+        givenSolutionsShorthand.add(".2....1..");
+        givenSolutionsShorthand.add("6......7.");
+        givenSolutionsShorthand.add(".4..8.6..");
+        givenSolutionsShorthand.add("...1...5.");
+        givenSolutionsShorthand.add("..9..7..3");
+        PuzzleResults results = solver.run(givenSolutionsShorthand, 10);
+        assertTrue(results.isValidPuzzle());
+        assertEquals(1, results.getResults().size());
+    }
+    
 }
