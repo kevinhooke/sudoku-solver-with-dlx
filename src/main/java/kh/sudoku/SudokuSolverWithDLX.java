@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ public class SudokuSolverWithDLX {
     private int maximumSolutions;
     
     private int recursiveDepthCount;
+    private int totalRecursiveDepthCount;
     private int valuesTriedCount;
     private boolean endSearch = false;;
     
@@ -88,6 +90,31 @@ public class SudokuSolverWithDLX {
         return this.results;
     }
     
+    public PuzzleResults generateNewPuzzle(List<String> givenSolutionsShorthand, int maxSolutions) {
+        this.maximumSolutions = maxSolutions;
+        GridInputReader reader = new GridInputReader();
+        this.givenSolutions = reader.readGivenSolutions(givenSolutionsShorthand);        
+        
+        //initialize with givens
+        this.initiateCandidateMatrix(givenSolutions);        
+
+        try {
+            GridOutputWriter writer = new GridOutputWriter();
+            this.startTime = System.currentTimeMillis();
+            this.generatePuzzle();
+            this.endTime = System.currentTimeMillis();
+            this.printSolutionList();
+            
+        }
+        catch(Error e) {
+            System.out.println("candidate solution rows so far: " + this.potentialSolutionCandiates.size());
+        }
+        if(this.results.getResults().size() == 1) {
+            this.results.setValidPuzzle(true);
+        }
+        return this.results;
+    }
+    
     private List<String> convertSolutionCandidateListToListString(){
         List<String> values = new ArrayList<>();
         for(ConstraintCell c : this.potentialSolutionCandiates) {
@@ -119,6 +146,7 @@ public class SudokuSolverWithDLX {
     
     public void solve() {
         recursiveDepthCount++;
+        totalRecursiveDepthCount++;
         if(!endSearch) {
             //Knuth DLX: if R[h] = h print solution and return
             //interpretation 1: if node on right of root node is the root node, there are no columns left
@@ -188,9 +216,118 @@ public class SudokuSolverWithDLX {
         recursiveDepthCount--;
     }
 
+    public void generatePuzzle() {
+        
+        LOGGER.debug("current generated puzzle rows: ");
+        this.solution = this.writer.writeGrid(this.convertSolutionCandidateListToListString(), 9, 9);
+        System.out.println(this.solution);
+        System.out.println("recursive depth: " + recursiveDepthCount);
+        //this.currentSolution = this.writer.writeShorthand(this.convertSolutionCandidateListToListString(), 9, 9);
+        
+        recursiveDepthCount++;
+        if(!endSearch) {
+            //Knuth DLX: if R[h] = h print solution and return
+            //interpretation 1: if node on right of root node is the root node, there are no columns left
+            //interpretation 2: if constraint matrix still has columns that have not yet been satisfied, continue, else end
+            if(this.rootNode.getRight() == this.rootNode || 
+                    this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode) == 0) {
+                System.out.println("end: puzzle generated");
+                this.printSolutionList();
+            }
+            else {
+                LOGGER.debug("columns remaining: " 
+                        + this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode) 
+                        + " (depth: " + this.recursiveDepthCount + ")");
+                                
+                //Knuth DLX: Otherwise chose a column object c
+                //interpretation: select a constraint column from matrix
+                // - for generating a new puzzle, pick a random column
+                //ConstraintCell c = this.getRandomNextColumn(this.rootNode);
+                ConstraintCell c = this.getNextColumn(this.rootNode);
+                if(c == null) {
+                    //this should never happen if the implementation is working correctly
+                    LOGGER.error("*** c is null!");
+                    return;
+                }
+                LOGGER.debug("next column constraint: " + c.getName());
+                
+                this.dancingLinks.coverColumn(c);
+                
+                //Knuth DLX: for each r <- D[c], D[D[c]], ..., while r != c
+                //interpretation: for each row in the current column, moving down
+                for(ConstraintCell r = c.getDown(); r != c; r = r.getDown()) {
+                    //Knuth DLX: set Ok <- r
+                    //interpretation: add current row to solution
+                    potentialSolutionCandiates.add(r);
+                    valuesTriedCount++;
+                    
+                    //Knuth DLX: for each j <- R[r], R[R[r]], ..., while j != r
+                    //interpretation: for each cell to the right in the current row
+                    ConstraintCell j = r;
+                    for(j = r.getRight(); j != r; j = j.getRight()) {
+                        //Knuth DLX: cover column C[j]
+                        this.dancingLinks.coverColumn(this.dancingLinks.getColumnHeaderForCell(j));
+                    }
+
+                    //check if we've generated enough of a puzzle yet
+                    this.checkForGeneratedPuzzle();
+                    
+                    //Knuth DLX: search(k+1)
+                    this.generatePuzzle();
+                    
+                    //Knuth DLX: set r <- Ok and c <- C[r]
+                    r = this.potentialSolutionCandiates.removeLast();
+                    c = this.dancingLinks.getColumnHeaderForCell(r);
+    
+                    ConstraintCell jj = r;
+                    //Knuth DLX: for each j <- L[r],L[L[r]], ..., while j != r
+                    for(jj = r.getLeft(); jj != r; jj = jj.getLeft()) {
+                        //Knuth: uncover column C[j]
+                        this.dancingLinks.uncoverColumn(this.dancingLinks.getColumnHeaderForCell(jj));
+                    }
+                    
+                }
+                //Knuth DLX: uncover column c and return
+                this.dancingLinks.uncoverColumn(c);
+            }
+        }
+        recursiveDepthCount--;
+    }
+    
     public void checkForSolution() {
         if(this.potentialSolutionCandiates.size() == (CombinationGenerator.MAX_COLS * CombinationGenerator.MAX_ROWS) 
                 - this.givenSolutions.size()) {
+            
+            this.solutions++;
+            
+            this.endTime = System.currentTimeMillis();
+            LOGGER.debug("current solution rows: ");
+            this.printSolutionList();
+            System.out.println("Starting puzzle:");
+            this.writer.writeGrid(givenSolutions, 9, 9);
+            System.out.println("Solution:");
+            this.solution = this.writer.writeGrid(this.convertSolutionCandidateListToListString(), 9, 9);
+            this.currentSolution = this.writer.writeShorthand(this.convertSolutionCandidateListToListString(), 9, 9);
+            this.results.addResult(this.currentSolution);
+            
+            //result current solution for next
+            this.currentSolution = new ArrayList<>();
+            
+            System.out.println("recursive depth count: " + this.recursiveDepthCount);
+            System.out.println("deepest recursive depth count: " + this.totalRecursiveDepthCount);
+            System.out.println("potential candidates tried count: " + this.valuesTriedCount);
+            System.out.println("solutions found: " + this.solutions);
+            System.out.println("Elapsed ms: " + (endTime - startTime));
+            //if we've already found the specified maximum solutions set exit flag
+            if(this.solutions == this.maximumSolutions) {
+                this.endSearch = true;
+            }
+        }
+    }
+
+    public void checkForGeneratedPuzzle() {
+        if(this.potentialSolutionCandiates.size() == (CombinationGenerator.MAX_COLS * CombinationGenerator.MAX_ROWS) 
+                - 40) {
             
             this.solutions++;
             
@@ -217,9 +354,11 @@ public class SudokuSolverWithDLX {
             }
         }
     }
-
+    
     /**
      * Get next column sequentially from the list.
+     * 
+     * This is used by the solver, but not the puzzle generator.
      * 
      * Note: the suggested better alternative is to get the next column with the 
      * least number of satisfied rows.
@@ -253,18 +392,49 @@ public class SudokuSolverWithDLX {
                     colWithLeastRemaining = nextColumn;
                 }
             }
-//            //terrible approach: first with more than 0
-//            if(solutionsForColumn > 0) {
-//                //System.out.println("... remaining rows for column " + nextColumn.getName() + " : " + solutionsForColumn);
-//                break;
-//            }
-//            else {
-//                //System.out.println("... remaining rows for column " + nextColumn.getName() + " : " + solutionsForColumn + " ... trying next");
-//            }
         }
         return colWithLeastRemaining;
     }
 
+    /**
+     * Get next column randomly from remaining colunmns.
+     * 
+     * This is used by the puzzle generator.
+     *
+     * @param rootNode
+     * @return
+     */
+    private ConstraintCell getRandomNextColumn(ConstraintCell c) {
+        int remainingConstraints = this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode);
+        int randomColumn = new Random().nextInt(remainingConstraints);
+        int solutionsForColumn = 0;
+        
+        ConstraintCell nextColumn = null;
+        
+        ConstraintCell nextRandomColumn = null;
+        int currentColumn = 0;
+        
+        //get next random column where solutionsForColumn must be < 9
+        
+        //TODO: try getting all rows where remaining Contraints is lowest, and then picking random one of these
+        
+        for(nextColumn = c.getRight(); nextColumn.getRight() != c && (nextRandomColumn == null || currentColumn <= randomColumn); currentColumn++) {
+            solutionsForColumn = this.dancingLinks.countRemainingCandidateSolutionRowsInColumn(nextColumn);
+            LOGGER.debug("Candidate rows in this col: " + solutionsForColumn);
+            nextColumn = nextColumn.getRight();
+            
+            //keep track of last column with at least 1 candidate row, so
+            //we don't return a column than has 0 candidate rows
+            if(solutionsForColumn > 0) {
+                nextRandomColumn = nextColumn;
+            }
+        }
+        if(nextRandomColumn == null) {
+            System.out.println("uhoh");
+        }
+        return nextRandomColumn;
+    }
+    
     public ConstraintCell initiateCandidateMatrix(List<String> givenSolutions) {
         this.rootNode = this.generator.generateConstraintGrid(givenSolutions);
         
