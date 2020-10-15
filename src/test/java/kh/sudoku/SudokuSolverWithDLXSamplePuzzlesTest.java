@@ -676,4 +676,27 @@ public class SudokuSolverWithDLXSamplePuzzlesTest {
         assertEquals(1, results.getResults().size());
     }
     
+    /**
+     * Example puzzle with hidden singles
+     * 
+     * From http://hodoku.sourceforge.net/en/tech_singles.php#h1
+     */
+    @Test
+    public void testEasyFromHodoku1() {
+        SudokuSolverWithDLX solver = new SudokuSolverWithDLX();
+        List<String> givenSolutionsShorthand = new ArrayList<>();
+        givenSolutionsShorthand.add(".28..7...");
+        givenSolutionsShorthand.add(".16.83.7.");
+        givenSolutionsShorthand.add("....2.851");
+        givenSolutionsShorthand.add("13729....");
+        givenSolutionsShorthand.add("...73....");
+        givenSolutionsShorthand.add("....463.7");
+        givenSolutionsShorthand.add("29..7....");
+        givenSolutionsShorthand.add("...86.14.");
+        givenSolutionsShorthand.add("...3..7..");
+        PuzzleResults results = solver.run(givenSolutionsShorthand, 10);
+        assertTrue(results.isValidPuzzle());
+        assertEquals(1, results.getResults().size());
+    }
+    
 }
