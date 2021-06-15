@@ -6,6 +6,7 @@ import java.util.List;
 public class PuzzleResults {
 
     private boolean validPuzzle;
+    private int maxCandidateRemovalAttempts;
     
     /**
      * List of results. For a valid puzzle, the list is populated with a single
@@ -27,5 +28,13 @@ public class PuzzleResults {
 
     public void setValidPuzzle(boolean validPuzzle) {
         this.validPuzzle = validPuzzle;
+    }
+
+    public int getMaxCandidateRemovalAttempts() {
+        return maxCandidateRemovalAttempts;
+    }
+
+    public void setMaxCandidateRemovalAttempts(int maxCandidateRemovalAttempts) {
+        this.maxCandidateRemovalAttempts = maxCandidateRemovalAttempts;
     }
 }
