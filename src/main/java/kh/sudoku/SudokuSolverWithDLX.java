@@ -77,7 +77,7 @@ public class SudokuSolverWithDLX {
             this.startTime = System.currentTimeMillis();
             this.solve();
             this.endTime = System.currentTimeMillis();
-            System.out.println("... search ended, nodes in solution list: " + this.potentialSolutionCandiates.size());
+            LOGGER.debug("... search ended, nodes in solution list: " + this.potentialSolutionCandiates.size());
             this.printSolutionList();
             
         }
@@ -153,7 +153,7 @@ public class SudokuSolverWithDLX {
             //interpretation 2: if constraint matrix still has columns that have not yet been satisfied, continue, else end
             if(this.rootNode.getRight() == this.rootNode || 
                     this.dancingLinks.countRemainingUnsatisfiedConstraints(this.rootNode) == 0) {
-                System.out.println("end: solution found");
+                LOGGER.debug("end: solution found");
                 this.printSolutionList();
             }
             else {
@@ -303,9 +303,9 @@ public class SudokuSolverWithDLX {
             this.endTime = System.currentTimeMillis();
             LOGGER.debug("current solution rows: ");
             this.printSolutionList();
-            System.out.println("Starting puzzle:");
+            LOGGER.debug("Starting puzzle:");
             this.writer.writeGrid(givenSolutions, 9, 9);
-            System.out.println("Solution:");
+            LOGGER.debug("Solution:");
             this.solution = this.writer.writeGrid(this.convertSolutionCandidateListToListString(), 9, 9);
             this.currentSolution = this.writer.writeShorthand(this.convertSolutionCandidateListToListString(), 9, 9);
             this.results.addResult(this.currentSolution);
@@ -313,11 +313,11 @@ public class SudokuSolverWithDLX {
             //result current solution for next
             this.currentSolution = new ArrayList<>();
             
-            System.out.println("recursive depth count: " + this.recursiveDepthCount);
-            System.out.println("deepest recursive depth count: " + this.totalRecursiveDepthCount);
-            System.out.println("potential candidates tried count: " + this.valuesTriedCount);
-            System.out.println("solutions found: " + this.solutions);
-            System.out.println("Elapsed ms: " + (endTime - startTime));
+            LOGGER.info("recursive depth count: " + this.recursiveDepthCount);
+            LOGGER.info("deepest recursive depth count: " + this.totalRecursiveDepthCount);
+            LOGGER.info("potential candidates tried count: " + this.valuesTriedCount);
+            LOGGER.info("solutions found: " + this.solutions);
+            LOGGER.info("Elapsed ms: " + (endTime - startTime));
             //if we've already found the specified maximum solutions set exit flag
             if(this.solutions == this.maximumSolutions) {
                 this.endSearch = true;

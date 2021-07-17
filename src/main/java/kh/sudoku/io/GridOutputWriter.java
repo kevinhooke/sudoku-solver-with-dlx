@@ -3,8 +3,12 @@ package kh.sudoku.io;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class GridOutputWriter {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GridOutputWriter.class);
     
     
     public String writeGrid(List<String> results, int rows, int cols) {
@@ -43,7 +47,7 @@ public class GridOutputWriter {
             }
         }
         
-        System.out.println(builder.toString());
+        LOGGER.debug(builder.toString());
         return builder.toString();
     }
 

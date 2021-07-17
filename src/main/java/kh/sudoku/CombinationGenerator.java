@@ -95,7 +95,7 @@ public class CombinationGenerator {
         //make circular link from last node in each column back to column header node
         this.linkLastNodeInEachColumnBackToColumnHeaderNode();
 
-        LOGGER.info("\nCombinations: " + numberOfCombinations + "\n");
+        LOGGER.debug("\nCombinations: " + numberOfCombinations + "\n");
         
         return rootNode;
     }
@@ -461,7 +461,7 @@ public class CombinationGenerator {
                 numberOfCombinations++;
             }
         }
-        System.out.println("Combinations: " + numberOfCombinations);
+        LOGGER.debug("Combinations: " + numberOfCombinations);
     }
     
     public void generateNumberInARowCombinations() {
@@ -472,7 +472,7 @@ public class CombinationGenerator {
                 numberOfCombinations++;
             }
         }
-        System.out.println("Combinations: " + numberOfCombinations);
+        LOGGER.debug("Combinations: " + numberOfCombinations);
     }
     
     public void generateNumberInAColumnCombinations() {
@@ -483,7 +483,7 @@ public class CombinationGenerator {
                 numberOfCombinations++;
             }
         }
-        System.out.println("Combinations: " + numberOfCombinations);
+        LOGGER.debug("Combinations: " + numberOfCombinations);
         
     }
 
@@ -495,7 +495,7 @@ public class CombinationGenerator {
                 numberOfCombinations++;
             }
         }
-        System.out.println("Combinations: " + numberOfCombinations);
+        LOGGER.debug("Combinations: " + numberOfCombinations);
         
     }
 
